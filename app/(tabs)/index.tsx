@@ -1,13 +1,17 @@
 
 import { ThemedView } from '@/components/ui/ThemedView';
-import { StyleSheet, Text, View } from 'react-native';
+import { authClient } from '@/lib/auth-client';
+import { StyleSheet, Text, } from 'react-native';
 
 
 
 export default function HomeScreen() {
+
+  const { data: session } = authClient.useSession();
+
   return (
     <ThemedView>
-      <Text>Home</Text>
+      <Text>{session?.user?.name}</Text>
     </ThemedView>
   );
 }

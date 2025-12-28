@@ -1,10 +1,11 @@
-import { Link, Tabs } from 'expo-router';
+import { Link, Redirect, Tabs } from 'expo-router';
 import React from 'react';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import {Text, TouchableOpacity, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { ThemedView } from '@/components/ui/ThemedView';
 import { UserIcon } from '@/assets/icons/UserIcon';
+import { authClient } from '@/lib/auth-client';
 
 const Header = () => {
   return (
@@ -16,7 +17,7 @@ const Header = () => {
           Cava Allende
         </Text>
         <View className='flex-row items-center justify-center gap-2'>
-          <Link href="../auth/register">
+          <Link href="../auth/login">
             <UserIcon color='#000' size={32} />
           </Link>
         </View>
@@ -59,6 +60,13 @@ function CircleTab({ children, selected, onPress }: any) {
 
 export default function TabLayout() {
 
+  const { data: session, isPending } = authClient.useSession();
+
+  if (isPending) return null;
+
+  if (!session) {
+    return <Redirect href="/auth/login" />
+  }
 
   return (
     <ThemedView>
@@ -95,6 +103,19 @@ export default function TabLayout() {
           name="reviews"
           options={{
             title: 'Reviews',
+            tabBarIcon: ({ color }) => (
+              <IconSymbol size={28} name="house.fill" color={color} />
+            ),
+            tabBarButton: ({ children, onPress }) => (
+              <CircleTab onPress={onPress}>{children}</CircleTab>
+            ),
+          }}
+        />
+
+        <Tabs.Screen
+          name="config"
+          options={{
+            title: 'Config',
             tabBarIcon: ({ color }) => (
               <IconSymbol size={28} name="house.fill" color={color} />
             ),
