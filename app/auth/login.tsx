@@ -10,6 +10,14 @@ export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
+    const handleSocialLogin = async (provider: "google" | "apple") => {
+        const res = await authClient.signIn.social({
+            provider,
+            callbackURL: "/auth/login" // this will be converted to a deep link (eg. `myapp://dashboard`) on native
+        })
+        console.log(res)
+    }
+
     const handleLogin = async () => {
         const res = await authClient.signIn.email({
             email,
@@ -27,10 +35,10 @@ export default function Login() {
                 <Image source={require("@/assets/images/logo.png")} className=" h-32 mb-4" resizeMode="contain" />
                 <Text className="text-2xl text-textColor font-bold mb-4">Iniciar Sesión</Text>
                 <View className="w-full flex-row gap-2 items-center justify-between">
-                    <TouchableOpacity className=" items-center bg-tertiary justify-center w-1/2 h-12 border border-gray-300 rounded-lg px-2 mb-2">
+                    <TouchableOpacity onPress={() => handleSocialLogin("google")} className=" items-center bg-tertiary justify-center w-1/2 h-12 border border-gray-300 rounded-lg px-2 mb-2">
                         <GoogleIcon size={24} color="#fff" />
                     </TouchableOpacity>
-                    <TouchableOpacity className="items-center bg-tertiary justify-center w-1/2 h-12 border border-gray-300 rounded-lg px-2 mb-2">
+                    <TouchableOpacity onPress={() => handleSocialLogin("apple")} className="items-center bg-tertiary justify-center w-1/2 h-12 border border-gray-300 rounded-lg px-2 mb-2">
                         <AppleIcon size={24} color="#fff" />
                     </TouchableOpacity>
                 </View>

@@ -13,12 +13,12 @@ const Header = () => {
       className=''
     >
       <View className='py-6 flex-row items-cente px-2 justify-between'>
-        <Text className='text-3xl font-bold'>
+        <Text className='text-3xl font-bold text-tertiary'>
           Cava Allende
         </Text>
         <View className='flex-row items-center justify-center gap-2'>
           <Link href="../auth/login">
-            <UserIcon color='#000' size={32} />
+            <UserIcon color='#4F6F5D' size={32} />
           </Link>
         </View>
       </View>
@@ -36,13 +36,13 @@ function CircleTab({ children, selected, onPress }: any) {
     >
       <View
         style={{
-          width: 56,
-          height: 56,
-          borderRadius: 28,
+          width: 60,
+          height: 60,
+          borderRadius: 30,
           backgroundColor: '#E6DCC8',
           justifyContent: 'center',
           alignItems: 'center',
-          elevation: 10,
+          elevation: 5,
           shadowColor: 'black',
           shadowOffset: {
             width: 1,
@@ -60,14 +60,6 @@ function CircleTab({ children, selected, onPress }: any) {
 
 export default function TabLayout() {
 
-  const { data: session, isPending } = authClient.useSession();
-
-  if (isPending) return null;
-
-  if (!session) {
-    return <Redirect href="/auth/login" />
-  }
-
   return (
     <ThemedView>
       <StatusBar style="dark" />
@@ -81,17 +73,20 @@ export default function TabLayout() {
             backgroundColor: 'transparent',
             shadowColor: 'transparent',
             elevation: 0,
-            marginHorizontal: 60,
+            marginHorizontal: 20,
           },
           headerShown: false, // importante
+          animation:"none"
         }}
       >
         <Tabs.Screen
           name="index"
           options={{
             title: 'Home',
-            tabBarIcon: ({ color }) => (
-              <IconSymbol size={28} name="house.fill" color={color} />
+            tabBarActiveTintColor: '#4F6F5D',
+            tabBarInactiveTintColor: '#8FAE9E',
+            tabBarIcon: ({ color, focused }) => (
+              <IconSymbol size={28} name="house.fill" color={focused ? "#4F6F5D" : "#8FAE9E"} />
             ),
             tabBarButton: ({ children, onPress }) => (
               <CircleTab onPress={onPress}>{children}</CircleTab>
@@ -103,8 +98,10 @@ export default function TabLayout() {
           name="reviews"
           options={{
             title: 'Reviews',
-            tabBarIcon: ({ color }) => (
-              <IconSymbol size={28} name="house.fill" color={color} />
+            tabBarActiveTintColor: '#4F6F5D',
+            tabBarInactiveTintColor: '#8FAE9E',
+            tabBarIcon: ({ color, focused }) => (
+              <IconSymbol size={28} name="house.fill" color={focused ? "#4F6F5D" : "#8FAE9E"} />
             ),
             tabBarButton: ({ children, onPress }) => (
               <CircleTab onPress={onPress}>{children}</CircleTab>
@@ -116,8 +113,10 @@ export default function TabLayout() {
           name="config"
           options={{
             title: 'Config',
-            tabBarIcon: ({ color }) => (
-              <IconSymbol size={28} name="house.fill" color={color} />
+            tabBarActiveTintColor: '#4F6F5D',
+            tabBarInactiveTintColor: '#8FAE9E',
+            tabBarIcon: ({ color, focused }) => (
+              <IconSymbol size={28} name="house.fill" color={focused ? "#4F6F5D" : "#8FAE9E"} />
             ),
             tabBarButton: ({ children, onPress }) => (
               <CircleTab onPress={onPress}>{children}</CircleTab>
