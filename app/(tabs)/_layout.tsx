@@ -1,30 +1,12 @@
-import { Link, Redirect, Tabs } from 'expo-router';
+import { Tabs } from 'expo-router';
 import React from 'react';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import {Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { ThemedView } from '@/components/ui/ThemedView';
-import { UserIcon } from '@/assets/icons/UserIcon';
-import { authClient } from '@/lib/auth-client';
+import { Header } from '@/components/tabs/Header';
+import {LinearGradient} from 'expo-linear-gradient';
 
-const Header = () => {
-  return (
-    <View
-      className=''
-    >
-      <View className='py-6 flex-row items-cente px-2 justify-between'>
-        <Text className='text-3xl font-bold text-tertiary'>
-          Cava Allende
-        </Text>
-        <View className='flex-row items-center justify-center gap-2'>
-          <Link href="../auth/login">
-            <UserIcon color='#4F6F5D' size={32} />
-          </Link>
-        </View>
-      </View>
-    </View>
-  );
-};
 
 function CircleTab({ children, selected, onPress }: any) {
   return (
@@ -73,10 +55,21 @@ export default function TabLayout() {
             backgroundColor: 'transparent',
             shadowColor: 'transparent',
             elevation: 0,
-            marginHorizontal: 20,
+            marginHorizontal: 0,
+            position: 'absolute',
+            bottom: 10,
+            borderColor:"transparent",
           },
           headerShown: false, // importante
-          animation:"none"
+          animation:"none",
+          tabBarBackground: () => (
+            <LinearGradient
+              colors={["transparent", "#E6DCC8"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+              style={StyleSheet.absoluteFillObject}
+            />
+          ),
         }}
       >
         <Tabs.Screen
