@@ -1,0 +1,9 @@
+export interface IProduct {
+    id: number;
+    name: string;
+    price: number;
+    image: string;
+    producer: string;
+    label: string;
+    
+}
