@@ -1,10 +1,9 @@
 
-import WineIcon from '@/assets/icons/WineIcon';
+import ContainerCardWines from '@/components/tabs/index/ContainerCardWines';
+import ContainerCategoriesCarousel from '@/components/tabs/index/ContainerCategoriesCarousel';
 import { ThemedView } from '@/components/ui/ThemedView';
-import { IProduct } from '@/infrastructure/interfaces/product.interface';
 import { useShop } from '@/store/useShop';
-import { formatterCurrency } from '@/utils/formatterCurrency';
-import { FlatList, Image, Text, TouchableOpacity, View, } from 'react-native';
+
 
 const Vinos = [
   {
@@ -96,58 +95,11 @@ export default function HomeScreen() {
   const { addProduct } = useShop();
 
   return (
-    <ThemedView>
+    <ThemedView >
 
-      <FlatList
-        data={Vinos}
-        renderItem={({ item }: { item: IProduct }) => (
-          <View className='flex-1 flex-row w-full rounded-2xl bg-tertiary p-2' style={{ height: 220 }}>
-            <View className='w-1/3 h-full justify-center items-center overflow-visible'>
-              <Image 
-                source={require('@/assets/images/vino.png')} 
-                className='w-[120%] h-[140%] mt-[-40px]'
-                resizeMode='cover' 
-              />
-            </View>
-            <View className='flex-1 p-2 w-1/2  items-start gap-3'>
-              <View className="h-[56px] justify-center">
-                <Text
-                  className="text-xl font-bold text-white "
-                  numberOfLines={2}
-                  ellipsizeMode="tail"
-                >
-                  {item.name}
-                </Text>
-              </View>
-              <View className='flex-row items-center gap-2'>
-                <WineIcon size={24} color="white" />
-                <Text 
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                className="text-white  w-4/5">{item.producer}</Text>
-              </View>
-              <View className='flex-row items-center gap-2'>
-                <WineIcon size={24} color="white" />
-                <Text 
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                className="text-white w-4/5  ">{item.label}</Text>
-              </View>
-              <Text className='text-xl font-bold text-white '>Price: {formatterCurrency(item.price)}</Text>
-              <TouchableOpacity className='bg-white rounded-2xl p-2 w-full absolute bottom-[-20px]' onPress={() => addProduct(item)}>
-                <Text className='text-lg font-bold text-black text-center '>Add</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
-        ListHeaderComponent={<View className='h-8' />}
-        ItemSeparatorComponent={() => <View className='h-12' />}
-        style={{
-          height: '100%',
-        }}
-        showsVerticalScrollIndicator={false}
-        ListFooterComponent={<View className='h-48' />}
-      />
+      <ContainerCategoriesCarousel />
+
+      <ContainerCardWines data={Vinos} addProduct={addProduct} />
 
     </ThemedView>
   );
