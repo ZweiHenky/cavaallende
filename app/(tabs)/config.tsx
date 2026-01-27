@@ -55,8 +55,8 @@ export default function Config (){
               <View className='flex-col gap-4 w-full'>
                 <View className='flex-row items-center justify-between gap-4 w-full'>
                   <View className='flex-row items-center gap-4'>
-                    <View className='bg-secondary rounded-2xl p-4'>
-                      <LanguageIcon color='#4F6F5D' size={28} />
+                    <View className='border border-tertiary rounded-2xl p-4'>
+                      <LanguageIcon color='#c9a24d' size={28} />
                     </View>
                     <View>
                       <Text>Idioma</Text>
@@ -68,8 +68,8 @@ export default function Config (){
                 </View>
                 <View className='flex-row items-center justify-between gap-4 w-full'>
                   <View className='flex-row items-center gap-4'>
-                    <View className='bg-secondary rounded-2xl p-4'>
-                      <LocationIcon color='#4F6F5D' size={28} />
+                    <View className='border border-tertiary rounded-2xl p-4'>
+                      <LocationIcon color='#c9a24d' size={28} />
                     </View>
                     <View>
                       <Text>Ubicación</Text>
@@ -81,8 +81,8 @@ export default function Config (){
                 </View>
                 <View className='flex-row items-center justify-between gap-4 w-full'>
                   <View className='flex-row items-center gap-4'>
-                    <View className='bg-secondary rounded-2xl p-4'>
-                      <BellIcon color='#4F6F5D' size={28} />
+                    <View className='border border-tertiary rounded-2xl p-4'>
+                      <BellIcon color='#c9a24d' size={28} />
                     </View>
                     <View>
                       <Text>Notificaciones</Text>
@@ -93,8 +93,8 @@ export default function Config (){
                 </View>
                 <View className='flex-row items-center justify-between gap-4 w-full'>
                   <View className='flex-row items-center gap-4'>
-                    <View className='bg-secondary rounded-2xl p-4'>
-                      <MoonIcon color='#4F6F5D' size={28} />
+                    <View className='border border-tertiary rounded-2xl p-4'>
+                      <MoonIcon color='#c9a24d' size={28} />
                     </View>
                     <View>
                       <Text>Tema</Text>
@@ -111,8 +111,8 @@ export default function Config (){
             <Text className='text-lg text-center'>Si tienes alguna pregunta o problema, no dudes en contactarnos</Text>
             <View className='flex-row items-center justify-between gap-4 w-full'>
                 <View className='flex-row items-center gap-4'>
-                  <View className='bg-secondary rounded-2xl p-4'>
-                    <MoonIcon color='#4F6F5D' size={28} />
+                  <View className='border border-tertiary rounded-2xl p-4'>
+                    <MoonIcon color='#c9a24d' size={28} />
                   </View>
                   <View>
                     <Text>Centro de ayuda</Text>
@@ -122,8 +122,8 @@ export default function Config (){
               </View>
               <View className='flex-row items-center justify-between gap-4 w-full'>
                 <View className='flex-row items-center gap-4'>
-                  <View className='bg-secondary rounded-2xl p-4'>
-                    <MoonIcon color='#4F6F5D' size={28} />
+                  <View className='border border-tertiary rounded-2xl p-4'>
+                    <MoonIcon color='#c9a24d' size={28} />
                   </View>
                   <View>
                     <Text>Terminos y condiciones</Text>
@@ -133,8 +133,8 @@ export default function Config (){
               </View>
               <View className='flex-row items-center justify-between gap-4 w-full'>
                 <View className='flex-row items-center gap-4'>
-                  <View className='bg-secondary rounded-2xl p-4'>
-                    <MoonIcon color='#4F6F5D' size={28} />
+                  <View className='border border-tertiary rounded-2xl p-4'>
+                    <MoonIcon color='#c9a24d' size={28} />
                   </View>
                   <View>
                     <Text>Política de privacidad</Text>
