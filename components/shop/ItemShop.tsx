@@ -25,12 +25,12 @@ export default function ItemShop({ item }: { item: ItemProps }) {
 
         <View className='flex-1 flex-row justify-between h-full'>
           <View className='w-full'>
-            <View className='w-full flex-row justify-between'>
-              <Text className='text-xl font-bold text-black'>
+            <View className='w-full flex-row  justify-between'>
+              <Text className='text-xl w-4/5 font-bold text-black'>
                 {item.product.name}
               </Text>
               <TouchableOpacity onPress={() => removeProduct(item.product.id)}>
-                <TrashIcon color='#4F6F5D' size={28} /> 
+                <TrashIcon color='#c9a24d' size={28} /> 
               </TouchableOpacity>
             </View>
 
