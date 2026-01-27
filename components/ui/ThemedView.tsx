@@ -1,8 +1,27 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export function ThemedView({ children }: { children: React.ReactNode }) {
+interface ThemedViewProps {
+  children: React.ReactNode
+  withPaddingBottom?: boolean
+}
 
+export function ThemedView({ children, withPaddingBottom = true }: ThemedViewProps) {
 
+  if (withPaddingBottom === false) {
+    return (
+      <SafeAreaView 
+        edges={[
+          'left',
+          'right',
+          "top",
+          "bottom"
+        ]}
+        className="bg-background flex-1 px-2"
+        >
+        {children}
+      </SafeAreaView>
+    )
+  }
 
   return (
     <SafeAreaView 
@@ -10,10 +29,10 @@ export function ThemedView({ children }: { children: React.ReactNode }) {
         [
           'left',
           'right',
-          "top"
+          "top",
         ]
       }
-      className="bg-primary flex-1 px-2 pb-8"
+      className="bg-background flex-1 px-2 pb-8"
       >
       {children}
     </SafeAreaView>

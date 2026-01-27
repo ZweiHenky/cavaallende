@@ -1,3 +1,5 @@
+const { background } = require('@cloudinary/url-gen/qualifiers/focusOn');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -8,10 +10,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#E6DCC8',
-        secondary: '#8FAE9E',
-        tertiary: '#4F6F5D',
-        textColor: '#6E6A5E',
+        background: '#f5f2eb',
+        primary: '#1c1c1c',
+        secondary: '#5a0f1b',
+        tertiary: '#c9a24d',
+        textColor: '#8c8c8c',
       },
     },
   },

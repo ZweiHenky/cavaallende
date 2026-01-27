@@ -8,7 +8,7 @@ export default function HeaderBack({ title }: { title?: string }) {
     const navigate = useNavigation();
 
   return (
-    <View className='flex-row items-center gap-2 w-full h-12 justify-between'>
+    <View className='flex-row items-center px-2 py-4 gap-2 w-full  justify-between'>
         <TouchableOpacity onPress={() => navigate.goBack()}>
             <ArrowLeftIcon size={28} color="black" />
         </TouchableOpacity>

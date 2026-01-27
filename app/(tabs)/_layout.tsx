@@ -6,6 +6,8 @@ import { StatusBar } from 'expo-status-bar';
 import { ThemedView } from '@/components/ui/ThemedView';
 import { Header } from '@/components/tabs/Header';
 import {LinearGradient} from 'expo-linear-gradient';
+import InfoIcon from '@/assets/icons/InfoIcon';
+import SettingsIcon from '@/assets/icons/SettingsIcon';
 
 
 function CircleTab({ children, selected, onPress }: any) {
@@ -21,7 +23,7 @@ function CircleTab({ children, selected, onPress }: any) {
           width: 60,
           height: 60,
           borderRadius: 30,
-          backgroundColor: '#E6DCC8',
+          backgroundColor: '#f5f2eb',
           justifyContent: 'center',
           alignItems: 'center',
           elevation: 5,
@@ -46,7 +48,7 @@ export default function TabLayout() {
     <ThemedView>
       <StatusBar style="dark" />
       {/* HEADER VISUAL */}
-      <Header />
+      <Header title="Cava Allende" />
 
       {/* TABS */}
       <Tabs
@@ -57,14 +59,14 @@ export default function TabLayout() {
             elevation: 0,
             marginHorizontal: 0,
             position: 'absolute',
-            bottom: 10,
+            bottom: 0,
             borderColor:"transparent",
           },
           headerShown: false, // importante
           animation:"none",
           tabBarBackground: () => (
             <LinearGradient
-              colors={["transparent", "#E6DCC8"]}
+              colors={["#f5f2eb15", "#f5f2eb70", "#f5f2eb"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 0, y: 1 }}
               style={StyleSheet.absoluteFillObject}
@@ -75,11 +77,13 @@ export default function TabLayout() {
         <Tabs.Screen
           name="index"
           options={{
-            title: 'Home',
-            tabBarActiveTintColor: '#4F6F5D',
-            tabBarInactiveTintColor: '#8FAE9E',
+            tabBarLabel(props) {
+              return null;
+            },
+            tabBarActiveTintColor: '#c9a24d',
+            tabBarInactiveTintColor: '#5a0f1b',
             tabBarIcon: ({ color, focused }) => (
-              <IconSymbol size={28} name="house.fill" color={focused ? "#4F6F5D" : "#8FAE9E"} />
+              <IconSymbol size={28} name="house.fill" color={focused ? "#c9a24d" : "#5a0f1b"} />
             ),
             tabBarButton: ({ children, onPress }) => (
               <CircleTab onPress={onPress}>{children}</CircleTab>
@@ -90,11 +94,13 @@ export default function TabLayout() {
         <Tabs.Screen
           name="reviews"
           options={{
-            title: 'Reviews',
-            tabBarActiveTintColor: '#4F6F5D',
-            tabBarInactiveTintColor: '#8FAE9E',
+            tabBarLabel(props) {
+              return null;
+            },
+            tabBarActiveTintColor: '#c9a24d',
+            tabBarInactiveTintColor: '#5a0f1b',
             tabBarIcon: ({ color, focused }) => (
-              <IconSymbol size={28} name="house.fill" color={focused ? "#4F6F5D" : "#8FAE9E"} />
+              <InfoIcon size={28} color={focused ? "#c9a24d" : "#5a0f1b"} />
             ),
             tabBarButton: ({ children, onPress }) => (
               <CircleTab onPress={onPress}>{children}</CircleTab>
@@ -105,11 +111,13 @@ export default function TabLayout() {
         <Tabs.Screen
           name="config"
           options={{
-            title: 'Config',
-            tabBarActiveTintColor: '#4F6F5D',
-            tabBarInactiveTintColor: '#8FAE9E',
+            tabBarLabel(props) {
+              return null;
+            },
+            tabBarActiveTintColor: '#c9a24d',
+            tabBarInactiveTintColor: '#5a0f1b',
             tabBarIcon: ({ color, focused }) => (
-              <IconSymbol size={28} name="house.fill" color={focused ? "#4F6F5D" : "#8FAE9E"} />
+              <SettingsIcon size={28} color={focused ? "#c9a24d" : "#5a0f1b"} />
             ),
             tabBarButton: ({ children, onPress }) => (
               <CircleTab onPress={onPress}>{children}</CircleTab>

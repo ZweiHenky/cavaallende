@@ -19,12 +19,12 @@ export default function Index() {
 
       <HeaderBack title='Shop' />
 
-      <View className='w-[95%] mx-auto flex-row items-center justify-between mt-4 mb-4'>
+      {/* <View className='w-[95%] mx-auto flex-row items-center justify-between mt-4 mb-4'>
         <Text className='text-xl font-bold text-black text-center '>Clear all</Text>
         <TouchableOpacity className='' onPress={() => clearOrder()}>
-          <TrashIcon color='#4F6F5D' size={28} /> 
+          <TrashIcon color='#c9a24d' size={28} /> 
         </TouchableOpacity>
-      </View>
+      </View> */}
 
       {
         order.products.length === 0 ? (

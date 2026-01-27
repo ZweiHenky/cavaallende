@@ -9,7 +9,7 @@ interface ThemedScrollProps {
 export default function ThemedScroll({ children, className='' }: ThemedScrollProps) {
   return (
     <SafeAreaView 
-      className={`flex-1 bg-white px-2 `}
+      className={`flex-1 bg-background px-2 `}
     >
       <ScrollView 
         className={`flex-1 ${className}`}
