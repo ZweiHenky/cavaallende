@@ -13,7 +13,6 @@ export default function Index() {
 
     const { order, clearOrder } = useShop()
 
-
   return (
     <ThemedView>
 

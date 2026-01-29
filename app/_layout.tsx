@@ -1,6 +1,7 @@
 import { Stack } from 'expo-router';
 import 'react-native-reanimated';
 import '../global.css'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -8,16 +9,19 @@ export const unstable_settings = {
 
 export default function RootLayout() {
 
-  return (
-      <Stack
-        screenOptions={{
-          headerShown: false,
-        }}
-      >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="auth" options={{ headerShown: false }} />
+  const queryClient = new QueryClient()
 
-      </Stack>
+  return (
+      <QueryClientProvider client={queryClient}>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="auth" options={{ headerShown: false }} />
+        </Stack>
+      </QueryClientProvider>
 
   );
 }

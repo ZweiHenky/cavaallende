@@ -3,18 +3,18 @@ import { Dimensions, Text, useWindowDimensions, View } from 'react-native'
 import { useSharedValue } from "react-native-reanimated";
 import Carousel, { ICarouselInstance, Pagination } from "react-native-reanimated-carousel";
 import ItemCarousel from './ItemCarousel';
+import { useGetAllCategories } from "@/hooks/services/useGetAllCategories";
+import { Category } from '@/infrastructure/interfaces/category.interface';
+import { useCategory } from '@/store/useCategory';
+import Loading from '@/components/ui/Loading';
+import Error from '@/components/ui/Error';
 
 export default function ContainerCategoriesCarousel() {
 
-    // const progress = useSharedValue(0);
-    const categories = [
-	    "Vinos de la semana",
-	    "Vinos de ocasión", 
-        "Mejores vinos",
-        "Recomendacion del sommelier",
-        "Vinos mexicanos",
-        "Vinos organicos/biodinamicos/naturales",
-    ]; 
+    const { data, isLoading, error } = useGetAllCategories()
+
+    const { setCategoryActive} = useCategory()
+
     const window = useWindowDimensions().width;
     const ref = React.useRef<ICarouselInstance>(null);
     const progress = useSharedValue(0);
@@ -29,13 +29,21 @@ export default function ContainerCategoriesCarousel() {
 			animated: true,
 		});
 	};
+
+    if (isLoading) {
+        return <Loading />
+    }
+
+    if (error) {
+        return <Error message='Error al cargar las categorías' />
+    }
   
   return (
     <View className='w-full '>
         <Carousel
             ref={ref}
             // autoPlayInterval={2000}
-            data={categories}
+            data={data || []}
             loop={true}
             // pagingEnabled={true}
             // snapEnabled={true}
@@ -56,13 +64,16 @@ export default function ContainerCategoriesCarousel() {
             onProgressChange={(offsetProgress, absoluteProgress) => {
                 progress.value = absoluteProgress;
             }}
-            renderItem={({ item }) => (
+            onSnapToItem={(index) => {
+                setCategoryActive(data![index].id)
+            }}
+            renderItem={({ item }: { item: Category }) => (
                 <ItemCarousel item={item} />
             )}
         />
         <Pagination.Basic
             progress={progress}
-            data={categories}
+            data={data || []}
             size={20}
             dotStyle={{
                 borderRadius: 100,

@@ -2,17 +2,37 @@ import { IProduct } from '@/infrastructure/interfaces/product.interface'
 import React from 'react'
 import { FlatList, View } from 'react-native'
 import ItemCardWine from './ItemCardWine'
+import { useGetProductsByCategory } from '@/hooks/services/products/useGetProductsByCategory'
+import Loading from '@/components/ui/Loading'
+import Error from '@/components/ui/Error'
 
 
 interface ContainerCardWinesProps {
-    data: IProduct[]
     addProduct: (product: IProduct) => void
+    categoryActive: number | null
 }
 
-export default function ContainerCardWines({ data, addProduct }: ContainerCardWinesProps) {
+export default function ContainerCardWines({ addProduct, categoryActive }: ContainerCardWinesProps) {
+  
+  const category = categoryActive || 1
+
+  const { data, isLoading, error } = useGetProductsByCategory(category)
+
+  if (isLoading) {
+    return (
+      <Loading />
+    )
+  }
+
+  if (error || !data) {
+    return (
+      <Error message='Error al cargar los productos' />
+    )
+  }
+
   return (
     <FlatList
-        data={data}
+        data={data?.data.products}
         renderItem={({ item }: { item: IProduct }) => (
           <ItemCardWine item={item} addProduct={addProduct} />
         )}

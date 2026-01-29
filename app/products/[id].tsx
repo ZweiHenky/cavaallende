@@ -1,6 +1,6 @@
 import React from 'react'
 import { ThemedView } from '@/components/ui/ThemedView'
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import WineIcon from '@/assets/icons/WineIcon'
 import { Header } from '@/components/tabs/Header'
 import { formatterCurrency } from '@/utils/formatterCurrency'
@@ -8,25 +8,9 @@ import MinusIcon from '@/assets/icons/MinusIcon'
 import PlusIcon from '@/assets/icons/PlusIcon'
 import { useShop } from '@/store/useShop'
 import { useLocalSearchParams } from 'expo-router'
-
-const data = {
-  id: 1,
-  name: 'Cabernet Sauvignon',
-  price: 10,
-  image: '/vino.png',
-  producer: 'Caza Anza',
-  label: 'Syrah, Cabernet Sauvignon, Tempranillo y Malbec.',
-  variant: 'Syrah, Cabernet Sauvignon, Tempranillo y Malbec.',
-  fermentation: 'Fermentado en ánfora de concreto y roble francés.',
-  vintages: '2019, con capacidad de guarda de 10 a 15 años.',
-  temperature: '18° y 20° C.',
-  description: {
-    nose: 'Especiado y herbal, frutos maduros a higo y ciruela, notas marcadas a vainilla y caramelo.',
-    view: 'Granate con reflejos rubí y carmín.',
-    mouth: 'Se reafirman las notas a vainilla, nuez moscada y café; de gran cuerpo con taninos presentes y acidez fresca.',
-  },
-  recomdation: 'Se reafirman las notas a vainilla, nuez moscada y café; de gran cuerpo con taninos presentes y acidez fresca.',
-}
+import { useGetProductById } from '@/hooks/services/products/useGetProductById'
+import Loading from '@/components/ui/Loading'
+import Error from '@/components/ui/Error'
 
 export default function DetailsProduct() {
 
@@ -34,7 +18,45 @@ export default function DetailsProduct() {
 
   const { addQuantity, removeQuantity, order, addProduct } = useShop();
 
+  const { data, isLoading, error } = useGetProductById(Number(id))
+
   const product = order.products.find((product) => product.product.id === Number(id))
+
+  if (isLoading) {
+    return (
+      <ThemedView withPaddingBottom={false}>
+        <Header  />
+        <ScrollView  
+          contentContainerStyle={{
+            flexGrow: 1,
+            gap: 16,
+            paddingBottom: 20
+          }}
+          showsVerticalScrollIndicator={false}
+        >
+          <Loading />
+        </ScrollView>
+      </ThemedView>
+    )
+  }
+
+  if (error || !data) {
+    return (
+      <ThemedView withPaddingBottom={false}>
+        <Header  />
+        <ScrollView  
+          contentContainerStyle={{
+            flexGrow: 1,
+            gap: 16,
+            paddingBottom: 20
+          }}
+          showsVerticalScrollIndicator={false}
+        >
+          <Error message='Error al cargar el producto' />
+        </ScrollView>
+      </ThemedView>
+    )
+  }
 
   return (
     <ThemedView withPaddingBottom={false}>
@@ -47,6 +69,7 @@ export default function DetailsProduct() {
         }}
         showsVerticalScrollIndicator={false}
       >
+
         <View className='w-full h-52 flex-row justify-center items-center px-2'>
           <Image 
           source={require('@/assets/images/vino.png')} 
@@ -143,7 +166,7 @@ export default function DetailsProduct() {
           </View>
           <Text 
 
-          className='text-lg p-2 w-4/5'>{data.description.nose}</Text>
+          className='text-lg p-2 w-4/5'>{data.noise}</Text>
         </View>
 
         <View className='flex-row items-center gap-2 w-[90%] mx-auto shadow-lg bg-white p-2 rounded-2xl'>
@@ -152,7 +175,7 @@ export default function DetailsProduct() {
           </View>
           <Text 
 
-          className='text-lg p-2 w-4/5'>{data.description.view}</Text>
+          className='text-lg p-2 w-4/5'>{data.view}</Text>
         </View>
 
         <View className='flex-row items-center gap-2 w-[90%] mx-auto shadow-lg bg-white p-2 rounded-2xl'>
@@ -161,7 +184,7 @@ export default function DetailsProduct() {
           </View>
           <Text 
 
-          className='text-lg p-2 w-4/5'>{data.description.mouth}</Text>
+          className='text-lg p-2 w-4/5'>{data.mouth}</Text>
         </View>
 
         <Text className='text-3xl p-2 font-bold text-secondary '>
@@ -174,7 +197,7 @@ export default function DetailsProduct() {
           </View>
           <Text 
 
-          className='text-lg p-2 w-4/5'>{data.recomdation}</Text>
+          className='text-lg p-2 w-4/5'>{data.recomendation}</Text>
         </View>
       </ScrollView>
 

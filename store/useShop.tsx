@@ -27,9 +27,9 @@ export const useShop = create<IShop>()(
             addProduct: (item: IProduct) => {
                 const productInOrder = get().order.products.find((product) => product.product.id === item.id);
                 if (productInOrder) {
-                    set({ order: { ...get().order, products: get().order.products.map((product) => product.product.id === item.id ? { ...product, quantity: product.quantity + 1 } : product), count: get().order.count + 1, total: get().order.total + item.price } })
+                    set({ order: { ...get().order, products: get().order.products.map((product) => product.product.id === item.id ? { ...product, quantity: product.quantity + 1 } : product), count: get().order.count + 1, total: get().order.total + Number(item.price) } })
                 } else {
-                    set({ order: { ...get().order, products: [...get().order.products, {product: item, quantity: 1}], count: get().order.count + 1, total: get().order.total + item.price } })
+                    set({ order: { ...get().order, products: [...get().order.products, {product: item, quantity: 1}], count: get().order.count + 1, total: get().order.total + Number(item.price) } })
                 }
             },
             removeProduct: (id: number) => {
