@@ -25,48 +25,48 @@ export const useShop = create<IShop>()(
             },
             setOrder: (order: IOrder) => set({ order }),
             addProduct: (item: IProduct) => {
-                const productInOrder = get().order.products.find((product) => product.product.id === item.id);
+                const productInOrder = get().order.products.find((product) => product.product.product_id === item.product_id);
                 if (productInOrder) {
-                    set({ order: { ...get().order, products: get().order.products.map((product) => product.product.id === item.id ? { ...product, quantity: product.quantity + 1 } : product), count: get().order.count + 1, total: get().order.total + Number(item.price) } })
+                    set({ order: { ...get().order, products: get().order.products.map((product) => product.product.product_id === item.product_id ? { ...product, quantity: product.quantity + 1 } : product), count: get().order.count + 1, total: get().order.total + Number(item.price) } })
                 } else {
                     set({ order: { ...get().order, products: [...get().order.products, {product: item, quantity: 1}], count: get().order.count + 1, total: get().order.total + Number(item.price) } })
                 }
             },
             removeProduct: (id: number) => {
-                const product = get().order.products.find((product) => product.product.id === id);
+                const product = get().order.products.find((product) => product.product.product_id === id);
                 if (!product) return;
                 //quita toto el producto de la orden
                 set({
                     order: {
                         ...get().order,
-                        products: get().order.products.filter((p) => p.product.id !== id),
+                        products: get().order.products.filter((p) => p.product.product_id !== id),
                         count: get().order.count - product.quantity,
-                        total: get().order.total - (product.quantity * product.product.price),
+                        total: get().order.total - (product.quantity * Number(product.product.price)),
                     },
                 });
 
             },
             addQuantity: (id: number) => {
-                const product = get().order.products.find((product) => product.product.id === id);
+                const product = get().order.products.find((product) => product.product.product_id === id);
                 if (!product) return;
                 set({
                     order: {
                         ...get().order,
-                        products: get().order.products.map((p) => p.product.id === id ? { ...p, quantity: p.quantity + 1 } : p),
+                        products: get().order.products.map((p) => p.product.product_id === id ? { ...p, quantity: p.quantity + 1 } : p),
                         count: get().order.count + 1,
-                        total: get().order.total + product.product.price,
+                        total: get().order.total + Number(product.product.price),
                     },
                 });
             },
             removeQuantity: (id: number) => {
-                const product = get().order.products.find((product) => product.product.id === id);
+                const product = get().order.products.find((product) => product.product.product_id === id);
                 if (!product) return;
 
                 if (product.quantity === 1) {
                     set({
                         order: {
                             ...get().order,
-                            products: get().order.products.filter((p) => p.product.id !== id),
+                            products: get().order.products.filter((p) => p.product.product_id !== id),
                             count: get().order.count - product.quantity,
                             total: get().order.total - (product.quantity * product.product.price),
                         },
@@ -75,7 +75,7 @@ export const useShop = create<IShop>()(
                     set({
                         order: {
                             ...get().order,
-                            products: get().order.products.map((p) => p.product.id === id ? { ...p, quantity: p.quantity - 1 } : p),
+                            products: get().order.products.map((p) => p.product.product_id === id ? { ...p, quantity: p.quantity - 1 } : p),
                             count: get().order.count - 1,
                             total: get().order.total - product.product.price,
                         },
