@@ -9,7 +9,11 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ronnhy7.cavaAllende",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -28,7 +32,12 @@
       "bundler": "metro"
     },
     "plugins": [
-      "expo-router",
+      [
+        "expo-router",
+        {
+          "origin": "https://cavaallende.com"
+        }
+      ],
       [
         "expo-splash-screen",
         {
@@ -41,7 +50,14 @@
           }
         }
       ],
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": "cavaallende.com.app",
+          "publishableKey": "pk_test_51SuVrLDwFxNG6oviYmciTqnvcdnv9faqO80fYh9SmIoNWhgwPyVr2uPRDQvUX2ExnT4DrJgWdkAI9yj35wOyW0zj00lqnxDcDj"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

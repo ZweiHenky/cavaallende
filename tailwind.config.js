@@ -1,4 +1,4 @@
-const { background } = require('@cloudinary/url-gen/qualifiers/focusOn');
+
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
