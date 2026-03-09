@@ -29,18 +29,18 @@ export default function ItemShop({ item }: { item: ItemProps }) {
               <Text className='text-xl w-4/5 font-bold text-black'>
                 {item.product.name}
               </Text>
-              <TouchableOpacity onPress={() => removeProduct(item.product.id)}>
+              <TouchableOpacity onPress={() => removeProduct(Number(item.product.product_id))}>
                 <TrashIcon color='#c9a24d' size={28} /> 
               </TouchableOpacity>
             </View>
 
             <View className='w-full flex-row justify-between items-end flex-1'>
               <View className='flex-row items-center gap-4 bg-tertiary rounded-full px-2 py-2'>
-                <TouchableOpacity onPress={() => removeQuantity(item.product.id)}>
+                <TouchableOpacity onPress={() => removeQuantity(Number(item.product.product_id))}>
                   <MinusIcon color='white' size={24} />
                 </TouchableOpacity>
                 <Text className='text-white text-lg'>{item.quantity}</Text>
-                <TouchableOpacity onPress={() => addQuantity(item.product.id)}>
+                <TouchableOpacity onPress={() => addQuantity(Number(item.product.product_id))}>
                   <PlusIcon color='white' size={24} />
                 </TouchableOpacity>
               </View>
