@@ -8,7 +8,6 @@ export const getAllCategories = async (): Promise<CategoriesResponse["data"]> =>
         const data: CategoriesResponse = response.data
         return data.data
     } catch (error) {
-        console.error(error)
         throw error
     }
 }
