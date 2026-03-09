@@ -17,7 +17,8 @@ export default function ItemCardWine({ item, addProduct }: itemCardWineProps) {
     const router = useRouter()
 
     const watchProduct = () => {
-        router.push(`/products/${item.id}`)
+        console.log(item)
+        router.push(`/products/${item.product_id}`)
     }
 
   return (

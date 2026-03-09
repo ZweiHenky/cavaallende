@@ -1,4 +1,4 @@
-import { Tabs } from 'expo-router';
+import { Tabs, usePathname } from 'expo-router';
 import React from 'react';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -48,7 +48,12 @@ export default function TabLayout() {
     <ThemedView>
       <StatusBar style="dark" />
       {/* HEADER VISUAL */}
-      <Header title="Cava Allende" />
+
+      {usePathname() === "/" ? (
+        <Header title="Cava Allende" showSearch={true} />
+      ) : (
+        <Header title="Cava Allende" />
+      )}
 
       {/* TABS */}
       <Tabs
@@ -59,7 +64,7 @@ export default function TabLayout() {
             elevation: 0,
             marginHorizontal: 0,
             position: 'absolute',
-            bottom: 0,
+            bottom: -20,
             borderColor:"transparent",
           },
           headerShown: false, // importante
@@ -88,6 +93,7 @@ export default function TabLayout() {
             tabBarButton: ({ children, onPress }) => (
               <CircleTab onPress={onPress}>{children}</CircleTab>
             ),
+            headerShown: false,
           }}
         />
 

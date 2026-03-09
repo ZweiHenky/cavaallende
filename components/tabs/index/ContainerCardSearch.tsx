@@ -2,22 +2,21 @@ import { IProduct } from '@/infrastructure/interfaces/product.interface'
 import React from 'react'
 import { FlatList, View } from 'react-native'
 import ItemCardWine from './ItemCardWine'
-import { useGetProductsByCategory } from '@/hooks/services/products/useGetProductsByCategory'
+import { useGetProductByName } from '@/hooks/services/products/useGetProductByName'
 import Loading from '@/components/ui/Loading'
 import Error from '@/components/ui/Error'
 
 
-interface ContainerCardWinesProps {
+interface ContainerCardSearchProps {
     addProduct: (product: IProduct) => void
-    categoryActive: number | null
     selectedType: number | null
+    debounceSearchText: string
 }
 
-export default function ContainerCardWines({ addProduct, categoryActive, selectedType }: ContainerCardWinesProps) {
+export default function ContainerCardSearch({ addProduct, selectedType, debounceSearchText }: ContainerCardSearchProps) {
   
-  const category = categoryActive || 1
+   const { data, isLoading, error } = useGetProductByName(debounceSearchText, selectedType);
 
-  const { data, isLoading, error } = useGetProductsByCategory(category, selectedType)
 
   if (isLoading) {
     return (

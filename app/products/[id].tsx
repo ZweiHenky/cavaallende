@@ -1,6 +1,6 @@
 import React from 'react'
 import { ThemedView } from '@/components/ui/ThemedView'
-import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import WineIcon from '@/assets/icons/WineIcon'
 import { Header } from '@/components/tabs/Header'
 import { formatterCurrency } from '@/utils/formatterCurrency'
@@ -20,11 +20,11 @@ export default function DetailsProduct() {
 
   const { data, isLoading, error } = useGetProductById(Number(id))
 
-  const product = order.products.find((product) => product.product.id === Number(id))
+  const product = order.products.find((product) => product.product.product_id === Number(id))
 
   if (isLoading) {
     return (
-      <ThemedView withPaddingBottom={false}>
+      <ThemedView>
         <Header  />
         <ScrollView  
           contentContainerStyle={{
@@ -42,7 +42,7 @@ export default function DetailsProduct() {
 
   if (error || !data) {
     return (
-      <ThemedView withPaddingBottom={false}>
+      <ThemedView>
         <Header  />
         <ScrollView  
           contentContainerStyle={{
@@ -59,7 +59,7 @@ export default function DetailsProduct() {
   }
 
   return (
-    <ThemedView withPaddingBottom={false}>
+    <ThemedView >
       <Header  />
       <ScrollView  
         contentContainerStyle={{
@@ -87,6 +87,9 @@ export default function DetailsProduct() {
             <Text className='text-lg font-bold text-textColor '>
               {data.producer}
             </Text>
+            <Text className='text-lg font-bold text-textColor '>
+              Stock: {data.stock}
+            </Text>
             <Text className='text-2xl font-bold text-primary '>
               {formatterCurrency(data.price)}
             </Text>
@@ -94,11 +97,11 @@ export default function DetailsProduct() {
               product &&
               product.quantity > 0 ? (
                 <View className='flex-row items-center justify-center w-full gap-4 bg-tertiary rounded-full px-2 py-2'>
-                  <TouchableOpacity onPress={() => removeQuantity(data.id)}>
+                  <TouchableOpacity onPress={() => removeQuantity(data.product_id)}>
                     <MinusIcon color='white' size={24} />
                   </TouchableOpacity>
                   <Text className='text-white text-lg'>{product?.quantity}</Text>
-                  <TouchableOpacity onPress={() => addQuantity(data.id)}>
+                  <TouchableOpacity onPress={() => addQuantity(data.product_id)} disabled={product.quantity >= data.stock!}>
                     <PlusIcon color='white' size={24} />
                   </TouchableOpacity>
                 </View>
