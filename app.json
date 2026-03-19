@@ -57,6 +57,12 @@
           "merchantIdentifier": "cavaallende.com.app",
           "publishableKey": "pk_test_51SuVrLDwFxNG6oviYmciTqnvcdnv9faqO80fYh9SmIoNWhgwPyVr2uPRDQvUX2ExnT4DrJgWdkAI9yj35wOyW0zj00lqnxDcDj"
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
       ]
     ],
     "experiments": {

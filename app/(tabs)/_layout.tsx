@@ -8,6 +8,7 @@ import { Header } from '@/components/tabs/Header';
 import {LinearGradient} from 'expo-linear-gradient';
 import InfoIcon from '@/assets/icons/InfoIcon';
 import SettingsIcon from '@/assets/icons/SettingsIcon';
+import InboxIcon from '@/assets/icons/InboxIcon';
 
 
 function CircleTab({ children, selected, onPress }: any) {
@@ -89,6 +90,24 @@ export default function TabLayout() {
             tabBarInactiveTintColor: '#5a0f1b',
             tabBarIcon: ({ color, focused }) => (
               <IconSymbol size={28} name="house.fill" color={focused ? "#c9a24d" : "#5a0f1b"} />
+            ),
+            tabBarButton: ({ children, onPress }) => (
+              <CircleTab onPress={onPress}>{children}</CircleTab>
+            ),
+            headerShown: false,
+          }}
+        />
+
+        <Tabs.Screen
+          name="orders"
+          options={{
+            tabBarLabel(props) {
+              return null;
+            },
+            tabBarActiveTintColor: '#c9a24d',
+            tabBarInactiveTintColor: '#5a0f1b',
+            tabBarIcon: ({ color, focused }) => (
+              <InboxIcon size={28} color={focused ? "#c9a24d" : "#5a0f1b"} />
             ),
             tabBarButton: ({ children, onPress }) => (
               <CircleTab onPress={onPress}>{children}</CircleTab>

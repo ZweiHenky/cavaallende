@@ -4,17 +4,27 @@ import { FlatList, Text, TouchableOpacity, View } from 'react-native'
 import { useShop } from '@/store/useShop';
 import HeaderBack from '@/components/ui/HeaderBack';
 import TrashIcon from '@/assets/icons/TrashIcon';
-import { formatterCurrency } from '@/utils/formatterCurrency';
 import ItemShop from '@/components/shop/ItemShop';
-import CheckoutForm from '@/components/shop/stripe/CheckoutForm';
+import ShowBill from '@/components/shop/ShowBill';
+import { useUserLocation } from '@/hooks/config/useUserLocation';
+import { calculateShippingPrice } from '@/utils/shop/calculateShippingPrice';
 
 
 
 export default function Index() {
 
     const { order, clearOrder } = useShop()
+    const { location } = useUserLocation()
 
-    console.log(order.products)
+    const [costShipping, setCostShipping] = React.useState(0)
+
+    React.useEffect(() => {
+        if (location) {
+            const precioEnvio = calculateShippingPrice(location.latitude, location.longitude, 19.405914616000153, -99.17565470371922)
+            setCostShipping(Number(precioEnvio.precio))
+        }
+    }, [location])
+
 
   return (
     <ThemedView>
@@ -48,22 +58,7 @@ export default function Index() {
 
       {
         order.products.length > 0 && (
-            <View className='w-[95%] mx-auto flex-col  bg-white p-4 mt-4 mb-4 rounded-2xl'>
-              <View className='flex-row justify-between'>
-                <Text className='text-lg  text-black  '>Subtotal:</Text>
-                <Text className='text-lg  text-black  '>{formatterCurrency(order.total)}</Text>
-              </View>
-              <View className='flex-row justify-between'>
-                <Text className='text-lg  text-black  '>Envio:</Text>
-                <Text className='text-lg  text-black  '>{formatterCurrency(10)}</Text>
-              </View>
-              <View className='h-[0.5px] bg-slate-200 my-2 rounded-full ' />
-              <View className='flex-row justify-between'>
-                <Text className='text-xl font-bold text-black  '>Total:</Text>
-                <Text className='text-xl font-bold text-black  '>{formatterCurrency(order.total + 10)}</Text>
-              </View>
-              <CheckoutForm />
-            </View>
+            <ShowBill subtotal={order.total} costShipping={costShipping} />
         )
       }
     </ThemedView>

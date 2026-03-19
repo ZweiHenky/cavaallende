@@ -6,33 +6,43 @@ import React, { useState } from 'react'
 import { Alert, Text, TouchableOpacity } from 'react-native'
 import { filterPayload } from '@/infrastructure/mappers/order/filterPayload'
 import { useValidateStock } from '@/hooks/services/products/useValidateStock'
+import { authClient } from '@/lib/auth-client'
+import { useRouter } from 'expo-router'
+
 
 export default function CheckoutForm() {
 
-    const { order } = useShop()
+    const router = useRouter()
+
+    const { order, clearOrder } = useShop()
+    const { data: user } = authClient.useSession()
     const [loading, setLoading] = useState(false)
     const filteredProducts = filterPayload(order)
     const { initPaymentSheet, presentPaymentSheet } = useStripe()
-    let {data, error:stockError} = useValidateStock(filteredProducts)
+    let {data:resValidateStock, error:stockError} = useValidateStock(filteredProducts)
 
     const initializePaymentSheet = async () => {
 
         setLoading(true)
 
+        if (!user) return Alert.alert("Error", "Inicia sesión para realizar el pago")
+        
+
         try {
 
-            if (stockError) {
-                Alert.alert("Error", "Error al validar el stock")
-                return
+            if (stockError) return Alert.alert("Error", stockError.message)
+
+            if (resValidateStock?.status === 400) return Alert.alert("Error", resValidateStock.message)
+
+            const metadata = {
+                userId: user?.user.id,
+                order: filterPayload(order),
+                email: user?.user.email,
             }
 
-            if (data) {
-                Alert.alert("Error", "Stock no disponible")
-                return
-            }
+            console.log(metadata.order)
 
-
-            const { paymentIntent, ephemeralKey, customer } = await PaymentSheet({amount: order.total, currency: "mxn"})
+            const { paymentIntent, ephemeralKey, customer } = await PaymentSheet({amount: order.total, currency: "mxn", metadata})
 
             const {error} = await initPaymentSheet({
                 paymentIntentClientSecret: paymentIntent,
@@ -55,7 +65,8 @@ export default function CheckoutForm() {
                 // setLoading(true)
                 const {error} = await presentPaymentSheet()
                 if (!error) {
-                    Alert.alert("Payment successful")
+                    clearOrder()
+                    router.push("/(tabs)/orders")
                 }else{
                     Alert.alert("Payment failed")
                 }

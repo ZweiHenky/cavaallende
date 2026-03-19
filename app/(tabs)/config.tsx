@@ -1,14 +1,14 @@
 import { ThemedView } from '@/components/ui/ThemedView'
 import React from 'react'
-import { Button, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { authClient } from '@/lib/auth-client'
 import { useRouter } from 'expo-router';
 import LanguageIcon from '@/assets/icons/LanguageIcon';
-import ArrowRightIcon from '@/assets/icons/ArrowRightIcon';
 import LocationIcon from '@/assets/icons/LocationIcon';
 import BellIcon from '@/assets/icons/BellIcon';
 import MoonIcon from '@/assets/icons/MoonIcon';
 import ChevronRightIcon from '@/assets/icons/ChevronRightIcon';
+import { useUserLocation } from '@/hooks/config/useUserLocation';
 
 
 export default function Config (){
@@ -16,6 +16,8 @@ export default function Config (){
     const { data: session } = authClient.useSession();
 
     const router = useRouter();
+
+    const { address } = useUserLocation();
     
     const logOut = async () => {
         await authClient.signOut();
@@ -66,19 +68,27 @@ export default function Config (){
 
                   <ChevronRightIcon color='#4F6F5D50' size={28} />
                 </View>
-                <View className='flex-row items-center justify-between gap-4 w-full'>
+                <TouchableOpacity 
+                  onPress={() => router.push('/config')}
+                  className='flex-row items-center justify-between gap-4 w-full'
+                >
                   <View className='flex-row items-center gap-4'>
                     <View className='border border-tertiary rounded-2xl p-4'>
                       <LocationIcon color='#c9a24d' size={28} />
                     </View>
-                    <View>
+                    <View className='w-3/5'>
                       <Text>Ubicación</Text>
-                      <Text>México</Text>
+                      <Text 
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                        className='w-full '>
+                          {address?.formattedAddress}
+                        </Text>
                     </View>
+                    <ChevronRightIcon color='#4F6F5D50' size={28} />
                   </View>
                   
-                  <ChevronRightIcon color='#4F6F5D50' size={28} />
-                </View>
+                </TouchableOpacity>
                 <View className='flex-row items-center justify-between gap-4 w-full'>
                   <View className='flex-row items-center gap-4'>
                     <View className='border border-tertiary rounded-2xl p-4'>

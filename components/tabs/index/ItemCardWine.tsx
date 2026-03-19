@@ -44,16 +44,22 @@ export default function ItemCardWine({ item, addProduct }: itemCardWineProps) {
                 <View className='flex-row items-center gap-2'>
                 <WineIcon size={24} color="#c9a24d" />
                 <Text 
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                className="text-primary  w-4/5">{item.producer}</Text>
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                    className="text-primary  w-4/5"
+                >
+                    {item.producer}
+                </Text>
                 </View>
                 <View className='flex-row items-center gap-2'>
                 <WineIcon size={24} color="#c9a24d" />
                 <Text 
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                className="text-primary w-4/5  ">{item.variant}</Text>
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                    className="text-primary w-4/5  "
+                >
+                    {item.variant}
+                </Text>
                 </View>
                 <Text className='text-xl font-bold text-primary '>Price: {formatterCurrency(item.price)}</Text>
                 <TouchableOpacity className='bg-tertiary rounded-2xl p-2 w-full absolute bottom-[-20px]' onPress={() => addProduct(item)}>
