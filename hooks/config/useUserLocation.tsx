@@ -1,6 +1,8 @@
 import { useCallback, useEffect } from "react";
 import { useLocationStore } from "@/store/useLocationStore";
 import * as Location from 'expo-location';
+import { usePermissionsStore } from "@/store/usePermissionStore";
+import { PermissionStatus } from "@/infrastructure/interfaces/location.interface";
 
 type Coordinates = {
   latitude: number;
@@ -29,13 +31,15 @@ export function useUserLocation(): UseUserLocationReturn {
     setError 
   } = useLocationStore();
 
+  const { locationStatus, checkLocationPermission } = usePermissionsStore();
+
   const getLocation = useCallback(async () => {
     try {
       setLoading(true);
 
-      const { status } = await Location.requestForegroundPermissionsAsync();
+      const status = await checkLocationPermission();
 
-      if (status !== "granted") {
+      if (status === PermissionStatus.DENIED) {
         setError("Location permission denied");
         setLoading(false);
         return;
