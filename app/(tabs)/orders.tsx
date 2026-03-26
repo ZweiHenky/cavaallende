@@ -10,7 +10,7 @@ import OrderItem from "@/components/orders/OrderItem";
 
 export default function Orders() {
 
-    const { data: session } = authClient.useSession();
+    const { data: session, isPending: isLoadingSession } = authClient.useSession.get();
 
     const [active, setActive] = useState<string>("active");
 
@@ -19,6 +19,12 @@ export default function Orders() {
         session?.user!.id!, 
         { enabled: !!session?.user?.id } 
     );
+
+    if (isLoadingSession) {
+            return <ThemedView>
+                <Loading />
+            </ThemedView>;
+        }
 
     if (!session) {
         return <ThemedView>

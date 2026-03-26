@@ -8,6 +8,7 @@ import { filterPayload } from '@/infrastructure/mappers/order/filterPayload'
 import { useValidateStock } from '@/hooks/services/products/useValidateStock'
 import { authClient } from '@/lib/auth-client'
 import { useRouter } from 'expo-router'
+import { useLocationStore } from '@/store/useLocationStore'
 
 
 export default function CheckoutForm() {
@@ -20,6 +21,7 @@ export default function CheckoutForm() {
     const filteredProducts = filterPayload(order)
     const { initPaymentSheet, presentPaymentSheet } = useStripe()
     let {data:resValidateStock, error:stockError} = useValidateStock(filteredProducts)
+    const { address, lastKnownLocation } = useLocationStore()
 
     const initializePaymentSheet = async () => {
 
@@ -38,6 +40,11 @@ export default function CheckoutForm() {
                 userId: user?.user.id,
                 order: filterPayload(order),
                 email: user?.user.email,
+                location: {
+                    latitude: lastKnownLocation?.latitude,
+                    longitude: lastKnownLocation?.longitude,
+                    text_address: address?.formattedAddress
+                }
             }
 
             console.log(metadata.order)

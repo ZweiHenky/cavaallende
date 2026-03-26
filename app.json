@@ -13,6 +13,9 @@
       "bundleIdentifier": "com.ronnhy7.cavaAllende",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
+      },
+      "config": {
+        "googleMapsApiKey":  "AIzaSyAylqjT5dXoCnbdleST2ENsLPOUygTn8ug"
       }
     },
     "android": {
@@ -24,7 +27,12 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.ronnhy7.cavaAllende"
+      "package": "com.ronnhy7.cavaAllende",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDN-z71gX13MCBuH9UDsmY7EeqH7vTdyas"
+        }
+      }
     },
     "web": {
       "output": "static",

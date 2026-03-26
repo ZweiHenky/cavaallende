@@ -13,7 +13,7 @@ export default function Login() {
     const handleSocialLogin = async (provider: "google" | "apple") => {
         const res = await authClient.signIn.social({
             provider,
-            callbackURL: "/auth/login" // this will be converted to a deep link (eg. `myapp://dashboard`) on native
+            callbackURL: "/(tabs)/" // this will be converted to a deep link (eg. `myapp://dashboard`) on native
         })
         console.log(res)
     }

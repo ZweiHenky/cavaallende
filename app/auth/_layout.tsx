@@ -4,7 +4,7 @@ import React from 'react'
 
 export default function Layout() {
 
-  const { data: session } = authClient.useSession();
+  const { data: session } = authClient.useSession.get();
 
   if(session){
     router.replace("/")

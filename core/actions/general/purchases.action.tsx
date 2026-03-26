@@ -2,6 +2,16 @@ import apiGeneral from "@/core/api/apiGeneral";
 import { GetOrdersByStatusResponse } from "@/infrastructure/responses/purchases/getOrdersByStatus.response";
 import { GetPurchaseDetailResponse } from "@/infrastructure/responses/purchases/getPurchaseDetail.response";
 
+
+export const getPurchasesToday = async (): Promise<GetOrdersByStatusResponse> => {
+    try {
+        const res = await apiGeneral.get<GetOrdersByStatusResponse>(`/purchases/today`);
+        return res.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
 export const getPurchasesByStatus = async (status: string, user_id: string): Promise<GetOrdersByStatusResponse> => {
    try {
     const res = await apiGeneral.get<GetOrdersByStatusResponse>(`/purchases/search?status=${status}&user_id=${user_id}`);

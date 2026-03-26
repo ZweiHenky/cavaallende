@@ -68,10 +68,10 @@ export const Header = ({ title, showSearch = false }: HeaderProps) => {
                   <SearchIcon color='#c9a24d' size={32} />
                 </TouchableOpacity>
               )}
-              <Link href="../shop">
+              <TouchableOpacity onPress={() => router.push("../shop")}>
                 <ShopIcon color='#c9a24d' size={32} />
-              </Link>
-              <Text className='text-lg font-bold text-tertiary absolute top-[-8px] right-[-8px] bg-white rounded-full px-2'>{order.count}</Text>
+                <Text className='text-lg font-bold text-tertiary absolute top-[-8px] right-[-8px] bg-white rounded-full px-2'>{order.count}</Text>
+              </TouchableOpacity>
             </View>
           </>
         )}

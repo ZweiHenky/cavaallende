@@ -1,29 +1,29 @@
 import { ThemedView } from '@/components/ui/ThemedView'
-import React from 'react'
+import { useEffect, useState } from 'react'
 import { FlatList, Text, TouchableOpacity, View } from 'react-native'
 import { useShop } from '@/store/useShop';
 import HeaderBack from '@/components/ui/HeaderBack';
 import TrashIcon from '@/assets/icons/TrashIcon';
 import ItemShop from '@/components/shop/ItemShop';
 import ShowBill from '@/components/shop/ShowBill';
-import { useUserLocation } from '@/hooks/config/useUserLocation';
 import { calculateShippingPrice } from '@/utils/shop/calculateShippingPrice';
+import { useLocationStore } from '@/store/useLocationStore';
 
 
 
 export default function Index() {
 
     const { order, clearOrder } = useShop()
-    const { location } = useUserLocation()
+    const { lastKnownLocation } = useLocationStore()
 
-    const [costShipping, setCostShipping] = React.useState(0)
+    const [costShipping, setCostShipping] = useState(0)
 
-    React.useEffect(() => {
-        if (location) {
-            const precioEnvio = calculateShippingPrice(location.latitude, location.longitude, 19.405914616000153, -99.17565470371922)
+    useEffect(() => {
+        if (lastKnownLocation) {
+            const precioEnvio = calculateShippingPrice(lastKnownLocation.latitude, lastKnownLocation.longitude, 19.405914616000153, -99.17565470371922)
             setCostShipping(Number(precioEnvio.precio))
         }
-    }, [location])
+    }, [lastKnownLocation])
 
 
   return (

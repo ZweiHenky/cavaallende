@@ -15,6 +15,10 @@ export interface GetPurchaseDetailResponse {
         total: string;
         created_at: string;
         updated_at?: string;
+        location_id: number;
+        latitude: string;
+        longitude: string;
+        text_address: string;
         purchase_items: {
             purchase_item_id?: number;
             purchase_id: number;

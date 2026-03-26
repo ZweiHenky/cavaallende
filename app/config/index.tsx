@@ -2,24 +2,24 @@ import Error from "@/components/ui/Error";
 import HeaderBack from "@/components/ui/HeaderBack";
 import Loading from "@/components/ui/Loading";
 import { ThemedView } from "@/components/ui/ThemedView";
-import { useUserLocation } from "@/hooks/config/useUserLocation";
 import { Text, Button, View, TouchableOpacity } from "react-native";
+import { useLocationStore } from "@/store/useLocationStore";
 
 export default function Index() {
 
-    const { location, address, loading, error, refreshLocation } = useUserLocation();
+    const { lastKnownLocation, address, getLocation, setAddress } = useLocationStore();
 
-    if (loading) {
+    if (lastKnownLocation === null) {
         return <ThemedView>
             <HeaderBack title="Location"  />
             <Loading />
         </ThemedView>
     }
 
-    if (error) {
+    if (address === null) {
         return <ThemedView>
             <HeaderBack title="Location"  />
-            <Error message={error} />
+            <Error message="Address not found" />
         </ThemedView>   
     }
 
@@ -30,7 +30,7 @@ export default function Index() {
         street,
         country,
         streetNumber
-    } = address ?? {};
+    } = address;
 
     return (
         <ThemedView>
@@ -64,7 +64,7 @@ export default function Index() {
                 </View>
                     
                 <TouchableOpacity
-                    onPress={refreshLocation}
+                    onPress={setAddress}
                     className="bg-tertiary rounded-xl py-4 px-6"
                 >
                     <Text className="text-white text-lg font-bold text-center">Refresh Location</Text>

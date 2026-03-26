@@ -8,20 +8,22 @@ import LocationIcon from '@/assets/icons/LocationIcon';
 import BellIcon from '@/assets/icons/BellIcon';
 import MoonIcon from '@/assets/icons/MoonIcon';
 import ChevronRightIcon from '@/assets/icons/ChevronRightIcon';
-import { useUserLocation } from '@/hooks/config/useUserLocation';
+import { useLocationStore } from '@/store/useLocationStore';
 
 
 export default function Config (){
 
-    const { data: session } = authClient.useSession();
+    const { data: session } = authClient.useSession.get();
 
     const router = useRouter();
 
-    const { address } = useUserLocation();
+    const { address } = useLocationStore();
     
     const logOut = async () => {
         await authClient.signOut();
     }
+
+    console.log(session);
 
   return (
     <ThemedView>
@@ -68,6 +70,27 @@ export default function Config (){
 
                   <ChevronRightIcon color='#4F6F5D50' size={28} />
                 </View>
+
+                <TouchableOpacity 
+                  onPress={() => router.push('/config')}
+                  className='flex-row items-center justify-between gap-4 w-full'
+                >
+                  <View className='flex-row items-center gap-4'>
+                    <View className='border border-tertiary rounded-2xl p-4'>
+                      <LocationIcon color='#c9a24d' size={28} />
+                    </View>
+                    <View className='w-3/5'>
+                      <Text 
+                        numberOfLines={session?.user?.phoneNumber ? 1 : 2}
+                        ellipsizeMode="tail"
+                        className={`w-full ${session?.user?.phoneNumber ? "text-black" : "text-red-500"}`}>
+                          {session?.user?.phoneNumber || "Agregar número de teléfono"}
+                        </Text>
+                    </View>
+                    <ChevronRightIcon color={session?.user?.phoneNumber ? '#4F6F5D50' : '#5a0f1b'} size={28} />
+                  </View>
+                  
+                </TouchableOpacity>
                 <TouchableOpacity 
                   onPress={() => router.push('/config')}
                   className='flex-row items-center justify-between gap-4 w-full'
