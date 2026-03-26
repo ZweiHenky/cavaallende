@@ -15,7 +15,7 @@
         "ITSAppUsesNonExemptEncryption": false
       },
       "config": {
-        "googleMapsApiKey":  "AIzaSyAylqjT5dXoCnbdleST2ENsLPOUygTn8ug"
+        "googleMapsApiKey":  "process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY_IOS"
       }
     },
     "android": {
@@ -30,7 +30,7 @@
       "package": "com.ronnhy7.cavaAllende",
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyDN-z71gX13MCBuH9UDsmY7EeqH7vTdyas"
+          "apiKey": "process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY"
         }
       }
     },
