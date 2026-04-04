@@ -1,8 +1,12 @@
 
-import { expoClient } from "@better-auth/expo/client";
-import { createAuthClient } from "better-auth/client";
+
+import { createAuthClient } from "better-auth/react";
 import * as SecureStore from "expo-secure-store";
-import { phoneNumberClient } from "better-auth/client/plugins";
+import { adminClient, phoneNumberClient } from "better-auth/client/plugins";
+
+// eslint-disable-next-line import/no-unresolved
+import { expoClient } from "@better-auth/expo/client";
+import { ac, admin, delivery, user } from "./permissions";
 
 
 export const authClient = createAuthClient({
@@ -13,7 +17,19 @@ export const authClient = createAuthClient({
             storagePrefix: "cavaallende",
             storage: SecureStore,
         }),
-        phoneNumberClient()
+        phoneNumberClient(),
+        adminClient({
+            ac,
+            roles:{
+                admin,
+                delivery,
+                user,
+            }
+        }),
     ],
-    credentials: "include"
+    credentials: "include",
+    sessionOptions:{
+        refetchOnMount: true,
+        refetchOnWindowFocus: true,
+    }
 });

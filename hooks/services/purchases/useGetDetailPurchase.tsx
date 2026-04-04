@@ -3,8 +3,9 @@ import { getPurchaseDetail } from "@/core/actions/general/purchases.action";
 
 export const useGetDetailPurchase = (id: string) => {
     const { data, isLoading, error } = useQuery({
-        queryKey: ["purchases", "detail"],
+        queryKey: ["purchases-detail", id],
         queryFn: () => getPurchaseDetail(id),
+        enabled: !!id,
     });
     return { data, isLoading, error };
 };

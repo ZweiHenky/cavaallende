@@ -2,11 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { getPurchasesToday } from "@/core/actions/general/purchases.action";
 import { GetOrdersByStatusResponse } from "@/infrastructure/responses/purchases/getOrdersByStatus.response";
 
-export const useGetPurchasesToday = (options?: any) => {
+export const useGetPurchasesToday = (status: string) => {
     const { data, isLoading, error } = useQuery<GetOrdersByStatusResponse>({
-        queryKey: ["purchases-today"],
-        queryFn: () => getPurchasesToday(),
-        ...options
+        queryKey: ["purchases-today", status],
+        queryFn: () => getPurchasesToday(status),
+        enabled: !!status,
     });
 
     return { data, isLoading, error };

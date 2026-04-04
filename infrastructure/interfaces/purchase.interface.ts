@@ -10,6 +10,6 @@ export interface IPurchase {
     payment_method:    string;
     payment_reference: string | null;
     status:            string;
-    shipping_address:  string | null;
     notes:             string | null;
+    delivery_id:       string | null;
 }
