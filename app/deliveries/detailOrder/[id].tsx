@@ -4,14 +4,17 @@ import { useTracker } from "@/hooks/location/useTracker";
 import { useGetDetailPurchase } from "@/hooks/services/purchases/useGetDetailPurchase";
 import { useLocationStore } from "@/store/useLocationStore";
 import { formatterCurrency } from "@/utils/formatterCurrency";
-import { formatterDate } from "@/utils/formatterDate";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { CustomMarkerPin } from "@/components/maps/CustomMarkerPin";
 import { DraggableBottomSheet } from "@/components/ui/DraggableBottomSheet";
 import { OrderItemsList } from "@/components/orders/OrderItemsList";
+import { UserIcon } from "@/assets/icons/UserIcon";
+import PhoneIcon from "@/assets/icons/PhoneIcon";
+import CreditCardIcon from "@/assets/icons/CreditCardIcon";
+import { usePatchUpdateStatus } from "@/hooks/services/purchases/mutations/usePatchUpdateStatus";
 
 const initialLocation = {
     latitude: 19.40594093690812,
@@ -23,6 +26,7 @@ export default function DetailDelivery() {
     const { id } = useLocalSearchParams() as { id: string };
 
     const { data, isLoading, error } = useGetDetailPurchase(id);
+    const { updateStatusMutation, isPending } = usePatchUpdateStatus();
     const { lastKnownLocation, getLocation, watchLocation, clearWatchLocation } = useLocationStore()
 
     const [isTrackingHouse, setIsTrackingHouse] = useState(false);
@@ -82,6 +86,17 @@ export default function DetailDelivery() {
         }
     }, [data]);
 
+
+    const handleCall = (phoneNumber: string) => {
+        Linking.openURL(`tel:${phoneNumber}`);
+    };
+
+    const handleUpdateStatus = (status: string) => {
+        updateStatusMutation({ id, status });
+    };
+
+    const dataOrder = data?.data;
+    
     return (
         <ThemedView>
             
@@ -171,30 +186,53 @@ export default function DetailDelivery() {
                     {isLoading && <Text>Loading...</Text>}
                     {error && <Text>Error: {error.message}</Text>}
 
-                    {data?.data?.created_at && (
-                        <>
-                        <View className="flex-row justify-between items-center w-full mb-4">
-                            <Text className="text-xl  text-primary" > Order ID: {data?.data?.purchase_id}</Text>
-                            <Text className="text-xl  text-tertiary font-bold " >{data?.data?.status.toUpperCase()}</Text>
-                        </View>
-                        <View className="flex-col justify-between gap-2 w-full mb-4">
-                            <View className="flex-row justify-between items-center w-full">
-                                <Text className="text-xl  text-primary" > Date: </Text>
-                                <Text className="text-xl text-primary" >{formatterDate (data?.data?.created_at!)}</Text>
+                    {dataOrder?.created_at && (
+                        <View className="flex-col gap-8 w-full">
+                            <View className=" w-full mb-4 items-center">
+                                <Text className="text-3xl  text-tertiary font-bold text-center" >{dataOrder?.status.toUpperCase()}</Text>
                             </View>
                             <View className="flex-row justify-between items-center w-full">
-                                <Text className="text-xl text-primary" > Method: </Text>
-                                <Text className="text-xl text-primary" >{data?.data?.payment_method === "stripe" ? "Card" : "Cash"}</Text>
+                                <View className="flex-row  items-center gap-2">
+                                    <UserIcon color="#000" size={24} />
+                                    <Text className="text-xl text-primary" >{dataOrder?.user_name}</Text>
+                                </View>
+                                <View className="flex-row  items-center gap-2 ">
+                                    <CreditCardIcon color="#000" size={24} />
+                                    <Text className="text-xl text-primary" >{dataOrder?.payment_method === "stripe" ? "Card" : "Cash"}</Text>
+                                </View>
                             </View>
-                        </View>
-                        <OrderItemsList items={data?.data?.purchase_items || []} />
-                        <View className="flex-col justify-between items-end w-full mt-4">
                             <View className="flex-row justify-between items-center w-full">
-                                <Text className="text-xl font-bold text-primary" > Total: </Text>
-                                <Text className="text-xl text-primary border-t border-gray-200 pt-2 font-bold" >{formatterCurrency(Number(data?.data?.total))}</Text>
+                                <TouchableOpacity className="bg-primary p-2 rounded-xl w-2/6  gap-2 flex items-center justify-center" onPress={() => handleCall(dataOrder?.user_phone)}>
+                                    <PhoneIcon color="#fff" size={24} />
+                                </TouchableOpacity>
+                                <View className="flex-row  items-center gap-2 ">
+                                    <Text className="text-2xl text-primary pt-2 font-bold" >{formatterCurrency(Number(dataOrder?.total))}</Text>
+                                </View>
                             </View>
+
+                            <OrderItemsList items={data?.data?.purchase_items || []} />
+
+                            {dataOrder?.status === "accepted" && (
+                                <TouchableOpacity disabled={isPending} className={`bg-primary p-4 rounded-xl w-   full  gap-2 flex items-center justify-center ${isPending ? "opacity-50" : ""}`} onPress={() => handleUpdateStatus("on_the_way")}>
+                                    <Text className="text-white text-center"> {
+                                        isPending 
+                                        ? <ActivityIndicator color="#fff" /> 
+                                        : "ON THE WAY"
+                                    }</Text>
+                                </TouchableOpacity>
+                            )}
+
+                            {dataOrder?.status === "on_the_way" && (
+                                <TouchableOpacity disabled={isPending} className={`bg-primary p-4 rounded-xl w-   full  gap-2 flex items-center justify-center ${isPending ? "opacity-50" : ""}`} onPress={() => handleUpdateStatus("completed")}>
+                                    <Text className="text-white text-center"> {
+                                        isPending 
+                                        ? <ActivityIndicator color="#fff" /> 
+                                        : "FINISH ORDER"
+                                    }</Text>
+                                </TouchableOpacity>
+                            )}
+
                         </View>
-                        </>
                     )}
                 </DraggableBottomSheet>
 

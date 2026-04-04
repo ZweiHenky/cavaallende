@@ -1,16 +1,12 @@
-import { Tabs, usePathname, useRouter } from 'expo-router';
-import React, { useEffect } from 'react';
-import { IconSymbol } from '@/components/ui/icon-symbol';
+import { Tabs, usePathname } from 'expo-router';
+import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { ThemedView } from '@/components/ui/ThemedView';
 import { Header } from '@/components/tabs/Header';
 import {LinearGradient} from 'expo-linear-gradient';
-import SettingsIcon from '@/assets/icons/SettingsIcon';
 import InboxIcon from '@/assets/icons/InboxIcon';
-import { authClient } from '@/lib/auth-client';
-import socket from '@/core/socket/connect';
-import { useChangeStatus } from '@/hooks/sockets/purchases/useChangeStatus';
+import SettingsIcon from '@/assets/icons/SettingsIcon';
 
 
 function CircleTab({ children, selected, onPress }: any) {
@@ -48,25 +44,6 @@ function CircleTab({ children, selected, onPress }: any) {
 
 export default function TabLayout() {
 
-  const { data: session, isPending } = authClient.useSession()
-  const router = useRouter()
-
-  useChangeStatus();
-
-  useEffect(() => {
-    if (session && !isPending) {
-      if (session.user.role === 'delivery') {
-        router.replace('/deliveries/(tabs)/orders')
-      }
-    } 
-  }, [session,isPending, router])
-
-  useEffect(() => {
-    if (session && !isPending) {
-      socket.emit("joinRoom", session.user.id);
-    }
-  }, [session,isPending])
-
   return (
     <ThemedView>
       <StatusBar style="dark" />
@@ -102,7 +79,7 @@ export default function TabLayout() {
           ),
         }}
       >
-        <Tabs.Screen
+        {/* <Tabs.Screen
           name="index"
           options={{
             tabBarLabel(props) {
@@ -118,7 +95,7 @@ export default function TabLayout() {
             ),
             headerShown: false,
           }}
-        />
+        /> */}
 
         <Tabs.Screen
           name="orders"

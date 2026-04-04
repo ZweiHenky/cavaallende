@@ -10,12 +10,12 @@ import OrderItem from "@/components/orders/OrderItem";
 
 export default function Orders() {
 
-    const { data: session, isPending: isLoadingSession } = authClient.useSession.get();
+    const { data: session, isPending: isLoadingSession } = authClient.useSession();
 
     const [active, setActive] = useState<string>("active");
 
     const { data, isLoading, error } = useGetPurchasesByStatus(
-        active === "active" ? "pending,paid,on_the_way" : "cancelled,completed", 
+        active === "active" ? "pending,paid,on_the_way,accepted" : "cancelled,completed", 
         session?.user!.id!, 
         { enabled: !!session?.user?.id } 
     );

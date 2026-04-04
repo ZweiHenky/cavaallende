@@ -5,14 +5,12 @@ import { ThemedView } from '@/components/ui/ThemedView';
 import { useCategory } from '@/store/useCategory';
 import { useShop } from '@/store/useShop';
 import FilterContainer from '@/components/tabs/index/FilterContainer';
-import { useGetProductByName } from '@/hooks/services/products/useGetProductByName';
 import { useSearchStore } from '@/store/useSearchStore';
 import { useState } from 'react';
 import ContainerCardSearch from '@/components/tabs/index/ContainerCardSearch';
 
 export default function HomeScreen() {
 
-  // const { data: session } = authClient.useSession();
   const { addProduct } = useShop();
   const { categoryActive } = useCategory();
   const [selectedType, setSelectedType] = useState<number | null>(null);

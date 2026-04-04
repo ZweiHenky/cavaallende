@@ -2,31 +2,22 @@ import DeliveryItem from '@/components/deliveries/OrderItems';
 import Error from '@/components/ui/Error';
 import Loading from '@/components/ui/Loading';
 import { ThemedView } from '@/components/ui/ThemedView'
-import { useGetPurchasesByStatus } from '@/hooks/services/purchases/useGetPurchasesByStatus';
+import { useGetPurchasesToday } from '@/hooks/services/purchases/useGetPutchasesToday';
 import { IPurchase } from '@/infrastructure/interfaces/purchase.interface';
-import { authClient } from '@/lib/auth-client';
 import React, { useState } from 'react'
 import { FlatList, Text, TouchableOpacity, View } from 'react-native'
 
-export default function Reviews() {
+export default function Orders() {
 
   const [active, setActive] = useState<string>("active");
-  const { data: session, isPending: isLoadingSession } = authClient.useSession.get();
   
-    const { data, isLoading, error } = useGetPurchasesByStatus(
-        active === "active" ? "paid" : "accepted,on_the_way", 
-        session?.user?.id! 
+    const { data, isLoading, error } = useGetPurchasesToday(
+        active === "active" ? "paid" : "accepted,on_the_way"
     );
 
-    if (isLoadingSession) {
+    if (isLoading) {
         return <ThemedView>
             <Loading />
-        </ThemedView>;
-    }
-
-    if (!session) {
-        return <ThemedView>
-            <Error message="Please login to view your orders" />
         </ThemedView>;
     }
 

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ThemedView } from "@/components/ui/ThemedView";
 import { CustomMarkerPin } from "@/components/maps/CustomMarkerPin";
 import { DraggableBottomSheet } from "@/components/ui/DraggableBottomSheet";
@@ -13,6 +13,10 @@ import { useEffect, useState } from "react";
 import MapViewDirections from "react-native-maps-directions";
 import socket from "@/core/socket/connect";
 import { useTracker } from "@/hooks/location/useTracker";
+import PhoneIcon from "@/assets/icons/PhoneIcon";
+import CreditCardIcon from "@/assets/icons/CreditCardIcon";
+import { UserIcon } from "@/assets/icons/UserIcon";
+import { useChangeStatus } from "@/hooks/sockets/purchases/useChangeStatus";
 
 const initialLocation = {
     latitude: 19.40594093690812,
@@ -29,6 +33,7 @@ export default function DetailOrder() {
 
 
     useTracker(lastKnownLocation, id, "clientLocation");
+    useChangeStatus();
 
     const [locationDelivery, setLocationDelivery] = useState<{
         latitude:number;
@@ -66,10 +71,11 @@ export default function DetailOrder() {
 
     }, []);
     
-    useEffect(() => {
-        console.log(locationDelivery);
-    }, [locationDelivery]);
     
+    const handleCall = (phoneNumber: string) => {
+        Linking.openURL(`tel:${phoneNumber}`);
+    };
+        
 
     return (
         <ThemedView>
@@ -167,36 +173,32 @@ export default function DetailOrder() {
                     {error && <Text>Error: {error.message}</Text>}
 
                     {data && (
-                        <>
-                            <View className="flex-col justify-between items-center w-full mb-4 border-b border-gray-200 pb-2">
-                                <Text className="text-2xl  text-tertiary font-bold " >{data?.data?.status.toUpperCase()}</Text>
+                        <View className="flex-col gap-8 w-full">
+                            <View className=" w-full mb-4 items-center">
+                                <Text className="text-3xl  text-tertiary font-bold text-center" >{data?.data?.status.toUpperCase()}</Text>
                             </View>
-                            <View className="flex-col justify-between gap-2 w-full mb-4">
-                                <View className="flex-row justify-between items-center w-full">
-                                    <Text className="text-xl  text-primary" > Date: </Text>
-                                    <Text className="text-xl text-primary" >{formatterDate (data?.data?.created_at!)}</Text>
+                            <View className="flex-row justify-between items-center w-full">
+                                <View className="flex-row  items-center gap-2">
+                                    <UserIcon color="#000" size={24} />
+                                    <Text className="text-xl text-primary" >{data?.data?.delivery_name}</Text>
                                 </View>
-                                <View className="flex-row justify-between items-center w-full">
-                                    <Text className="text-xl text-primary" > Method: </Text>
-                                    <Text className="text-xl text-primary" >{data?.data?.payment_method === "stripe" ? "Card" : data?.data?.payment_method}</Text>
-                                </View>
-                            </View>
-                            <OrderItemsList items={data?.data?.purchase_items || []} />
-                            <View className="flex-col justify-between items-end w-full mt-4">
-                                <View className="flex-row justify-between items-center w-full">
-                                    <Text className="text-xl text-primary" > Subtotal: </Text>
-                                    <Text className="text-xl text-primary" >{formatterCurrency(Number(data?.data?.subtotal))}</Text>
-                                </View>
-                                <View className="flex-row justify-between items-center w-full">
-                                    <Text className="text-xl  text-primary" > Discount: </Text>
-                                    <Text className="text-xl text-primary" >{formatterCurrency(Number(data?.data?.discount))}</Text>
-                                </View>
-                                <View className="flex-row justify-between items-center w-full">
-                                    <Text className="text-xl font-bold text-primary" > Total: </Text>
-                                    <Text className="text-xl text-primary border-t border-gray-200 pt-2 font-bold" >{formatterCurrency(Number(data?.data?.total))}</Text>
+                                <View className="flex-row  items-center gap-2 ">
+                                    <CreditCardIcon color="#000" size={24} />
+                                    <Text className="text-xl text-primary" >{data?.data?.payment_method === "stripe" ? "Card" : "Cash"}</Text>
                                 </View>
                             </View>
-                        </>
+                            <View className="flex-row justify-between items-center w-full">
+                                <TouchableOpacity className="bg-primary p-2 rounded-xl w-2/6  gap-2 flex items-center justify-center" onPress={() => handleCall(data?.data?.delivery_phone!)}>
+                                    <PhoneIcon color="#fff" size={24} />
+                                </TouchableOpacity>
+                                <View className="flex-row  items-center gap-2 ">
+                                    <Text className="text-2xl text-primary pt-2 font-bold" >{formatterCurrency(Number(data?.data?.total))}</Text>
+                                </View>
+                            </View>
+
+                            <OrderItemsList items={data?.data?.purchase_items || []} />                                          
+
+                        </View>
                     )}
                 </DraggableBottomSheet>
 
