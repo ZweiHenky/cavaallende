@@ -11,11 +11,10 @@ export default function Login() {
     const [password, setPassword] = useState("");
 
     const handleSocialLogin = async (provider: "google" | "apple") => {
-        const res = await authClient.signIn.social({
+        await authClient.signIn.social({
             provider,
-            callbackURL: "/(tabs)/" // this will be converted to a deep link (eg. `myapp://dashboard`) on native
+            callbackURL: "/auth" 
         })
-        console.log(res)
     }
 
     const handleLogin = async () => {

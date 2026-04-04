@@ -73,7 +73,7 @@ export default function CheckoutForm() {
                 const {error} = await presentPaymentSheet()
                 if (!error) {
                     clearOrder()
-                    router.push("/(tabs)/orders")
+                    router.replace("/(tabs)/orders")
                 }else{
                     Alert.alert("Payment failed")
                 }
