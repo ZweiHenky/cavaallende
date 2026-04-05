@@ -4,7 +4,7 @@
     "slug": "cavaAllende",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/vino.png",
+    "icon": "./assets/logo.png",
     "scheme": "cavaallende",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -21,9 +21,9 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/vino.png",
-        "backgroundImage": "./assets/vino.png",
-        "monochromeImage": "./assets/vino.png"
+        "foregroundImage": "./assets/logo.png",
+        "backgroundImage": "./assets/logo.png",
+        "monochromeImage": "./assets/logo.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
@@ -49,7 +49,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/vino.png",
+          "image": "./assets/logo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
