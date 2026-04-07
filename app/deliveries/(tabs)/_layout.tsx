@@ -1,5 +1,5 @@
-import { Tabs, usePathname } from 'expo-router';
-import React from 'react';
+import { Tabs, usePathname, useRouter } from 'expo-router';
+import React, { useEffect } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { ThemedView } from '@/components/ui/ThemedView';
@@ -7,6 +7,7 @@ import { Header } from '@/components/tabs/Header';
 import {LinearGradient} from 'expo-linear-gradient';
 import InboxIcon from '@/assets/icons/InboxIcon';
 import SettingsIcon from '@/assets/icons/SettingsIcon';
+import { authClient } from '@/lib/auth-client';
 
 
 function CircleTab({ children, selected, onPress }: any) {
@@ -43,6 +44,15 @@ function CircleTab({ children, selected, onPress }: any) {
 }
 
 export default function TabLayout() {
+
+  const { data: session } = authClient.useSession();
+  const router = useRouter(); 
+
+  useEffect(() => {
+    if (session?.user.role !== 'delivery') {
+      router.replace("/(tabs)");
+    }
+  }, [session, router]);
 
   return (
     <ThemedView>

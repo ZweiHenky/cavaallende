@@ -4,8 +4,7 @@ import { CustomMarkerPin } from "@/components/maps/CustomMarkerPin";
 import { DraggableBottomSheet } from "@/components/ui/DraggableBottomSheet";
 import { OrderItemsList } from "@/components/orders/OrderItemsList";
 import { useGetDetailPurchase } from "@/hooks/services/purchases/useGetDetailPurchase";
-import { useLocalSearchParams } from "expo-router";
-import { formatterDate } from "@/utils/formatterDate";
+import { router, useLocalSearchParams } from "expo-router";
 import { formatterCurrency } from "@/utils/formatterCurrency";
 import MapView, { Marker } from "react-native-maps";
 import { useLocationStore } from "@/store/useLocationStore";
@@ -16,6 +15,7 @@ import { useTracker } from "@/hooks/location/useTracker";
 import PhoneIcon from "@/assets/icons/PhoneIcon";
 import CreditCardIcon from "@/assets/icons/CreditCardIcon";
 import { UserIcon } from "@/assets/icons/UserIcon";
+import { usePatchUpdateStatus } from "@/hooks/services/purchases/mutations/usePatchUpdateStatus";
 import { useChangeStatus } from "@/hooks/sockets/purchases/useChangeStatus";
 
 const initialLocation = {
@@ -29,10 +29,12 @@ export default function DetailOrder() {
     const { lastKnownLocation, getLocation, watchLocation, clearWatchLocation } = useLocationStore()
     const [isTrackingWine, setIsTrackingWine] = useState(false);
     const [isTrackingHouse, setIsTrackingHouse] = useState(false);
-
+    const { updateStatusMutation, isPending } = usePatchUpdateStatus();
 
 
     useTracker(lastKnownLocation, id, "clientLocation");
+
+    // socket update status
     useChangeStatus();
 
     const [locationDelivery, setLocationDelivery] = useState<{
@@ -70,12 +72,31 @@ export default function DetailOrder() {
     };
 
     }, []);
+
+    useEffect(() => {
+        if (data?.data?.status === "cancelled" || data?.data?.status === "completed") {
+            setTimeout(() => {
+                router.replace({
+                    pathname: "/orders/orderResume/[idResume]",
+                    params: {
+                        idResume: id,
+                    },
+                });
+            }, 5000);
+        }
+    }, [data?.data?.status]);
     
     
     const handleCall = (phoneNumber: string) => {
         Linking.openURL(`tel:${phoneNumber}`);
     };
         
+    const handleUpdateStatus = () => {
+        updateStatusMutation({
+            id: id,
+            status: "cancelled",
+        });
+    };
 
     return (
         <ThemedView>
@@ -92,7 +113,6 @@ export default function DetailOrder() {
                 }}
                 showsUserLocation={true}  
                 loadingEnabled={true}   
-                
                 >  
                 
                 <Marker
@@ -180,7 +200,7 @@ export default function DetailOrder() {
                             <View className="flex-row justify-between items-center w-full">
                                 <View className="flex-row  items-center gap-2">
                                     <UserIcon color="#000" size={24} />
-                                    <Text className="text-xl text-primary" >{data?.data?.delivery_name}</Text>
+                                    <Text className="text-xl text-primary" >{data?.data?.delivery_name || 'No delivery assigned'}</Text>
                                 </View>
                                 <View className="flex-row  items-center gap-2 ">
                                     <CreditCardIcon color="#000" size={24} />
@@ -196,7 +216,21 @@ export default function DetailOrder() {
                                 </View>
                             </View>
 
-                            <OrderItemsList items={data?.data?.purchase_items || []} />                                          
+                            <OrderItemsList items={data?.data?.purchase_items || []} /> 
+
+                            <View className="flex-row justify-between items-center w-full mt-4 border-t border-gray-200 pt-4">
+                                {
+                                    data?.data?.status === "accepted" || data?.data?.status === "paid" ? (
+                                        <View className="flex-col justify-between items-center w-full gap-4">
+                                            <Text className="text-2xl text-primary pt-2 font-bold" >Cancel Order</Text>
+                                            <Text className="text-sm text-primary pt-2" >You can cancel the order if the status is &apos;accepted&apos; or &apos;paid&apos;, if the status is &apos;on the way&apos; you can&apos;t cancel the order</Text>
+                                            <TouchableOpacity className="bg-primary p-4 rounded-xl w-full flex items-center justify-center" onPress={() => handleUpdateStatus()}>
+                                                <Text className="text-xl text-white font-bold" >Cancel</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    ) : ''
+                                }
+                            </View>                                      
 
                         </View>
                     )}
@@ -204,9 +238,6 @@ export default function DetailOrder() {
 
             </View>
             )}
-            
-
-
 
         </ThemedView>
     )

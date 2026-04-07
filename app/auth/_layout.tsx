@@ -1,8 +1,6 @@
-import { ThemedView } from '@/components/ui/ThemedView';
 import { authClient } from '@/lib/auth-client';
 import { Stack, useRouter } from 'expo-router'
 import React, { useEffect } from 'react'
-import Loading from '@/components/ui/Loading';
 
 export default function Layout() {
 
@@ -13,7 +11,12 @@ export default function Layout() {
   useEffect(() => {
     if (session && !isPending) {
       if (session.user.role === 'user') {
-        router.replace('/(tabs)')
+        if(session.user.phoneNumber){
+          router.replace('/(tabs)')
+        }else{
+          router.replace('/config/newPhone')
+        }
+
       }else if (session.user.role === 'delivery') {
         router.replace('/deliveries/(tabs)/orders')
       }

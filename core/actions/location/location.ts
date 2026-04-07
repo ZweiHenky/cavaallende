@@ -1,7 +1,7 @@
 import * as Location from 'expo-location';
 import { LatLng } from '@/infrastructure/interfaces/latlng.interface';
 
-export const getCurrentLocation = async (): Promise<LatLng> => {
+export const getCurrentLocation = async (): Promise<LatLng | undefined> => {
   try {
     const { coords } = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.Highest,
@@ -12,7 +12,7 @@ export const getCurrentLocation = async (): Promise<LatLng> => {
       longitude: coords.longitude,
     };
   } catch (error) {
-    throw new Error('Error getting users location');
+    console.log(error);
   }
 };
 

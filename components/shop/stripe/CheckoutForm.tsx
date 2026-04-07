@@ -3,7 +3,7 @@ import * as Linking from 'expo-linking'
 import { useShop } from '@/store/useShop'
 import { useStripe } from '@stripe/stripe-react-native'
 import React, { useState } from 'react'
-import { Alert, Text, TouchableOpacity } from 'react-native'
+import { ActivityIndicator, Alert, Text, TouchableOpacity } from 'react-native'
 import { filterPayload } from '@/infrastructure/mappers/order/filterPayload'
 import { useValidateStock } from '@/hooks/services/products/useValidateStock'
 import { authClient } from '@/lib/auth-client'
@@ -28,8 +28,16 @@ export default function CheckoutForm() {
         setLoading(true)
 
         if (!user) return Alert.alert("Error", "Inicia sesión para realizar el pago")
-        
 
+        if (!user.user.phoneNumber) {
+            Alert.alert("Error", "Debes agregar un número de teléfono para realizar el pago")
+            setTimeout(() => {
+                router.replace('/config/newPhone')
+            }, 500);
+            setLoading(false)
+            return
+        }
+        
         try {
 
             if (stockError) return Alert.alert("Error", stockError.message)
@@ -90,7 +98,11 @@ export default function CheckoutForm() {
 
   return (
     <TouchableOpacity disabled={loading} className='bg-tertiary rounded-2xl p-4 w-full mt-4 ' onPress={ initializePaymentSheet}>
-        <Text className='text-xl font-bold text-white text-center '>Pay</Text>
+        {loading ? (
+            <ActivityIndicator color="white" />
+        ) : (
+            <Text className='text-xl font-bold text-white text-center '>Pay</Text>
+        )}
     </TouchableOpacity>
   )
 }

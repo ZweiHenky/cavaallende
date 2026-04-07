@@ -1,4 +1,5 @@
-import { Stack, useRouter } from 'expo-router';
+import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
 import 'react-native-reanimated';
 import '../global.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -11,6 +12,8 @@ export default function RootLayout() {
   const queryClient = new QueryClient()
 
   useLocation()
+
+  SplashScreen.preventAutoHideAsync();
 
   return (
       <QueryClientProvider client={queryClient}>

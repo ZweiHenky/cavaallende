@@ -11,6 +11,7 @@ import InboxIcon from '@/assets/icons/InboxIcon';
 import { authClient } from '@/lib/auth-client';
 import socket from '@/core/socket/connect';
 import { useChangeStatus } from '@/hooks/sockets/purchases/useChangeStatus';
+import {OneSignal, LogLevel} from 'react-native-onesignal';
 
 
 function CircleTab({ children, selected, onPress }: any) {
@@ -58,6 +59,9 @@ export default function TabLayout() {
       if (session.user.role === 'delivery') {
         router.replace('/deliveries/(tabs)/orders')
       }
+      // if (!session.user.phoneNumber) {
+      //   router.replace('/config/newPhone')
+      // }
     } 
   }, [session,isPending, router])
 
@@ -66,6 +70,20 @@ export default function TabLayout() {
       socket.emit("joinRoom", session.user.id);
     }
   }, [session,isPending])
+
+  useEffect(() => {
+    if (session && !isPending) {
+      // Enable verbose logging for debugging (remove in production)
+      OneSignal.Debug.setLogLevel(LogLevel.Verbose);
+      // Initialize with your OneSignal App ID
+      OneSignal.initialize(process.env.EXPO_PUBLIC_ONESIGNAL_ID!);
+
+      OneSignal.login(session.user.id);
+      // Use this method to prompt for push notifications.
+      // We recommend removing this method after testing and instead use In-App Messages to prompt for notification permission.
+      OneSignal.Notifications.requestPermission(false);
+    }
+  }, [session])
 
   return (
     <ThemedView>

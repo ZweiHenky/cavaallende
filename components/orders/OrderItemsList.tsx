@@ -21,7 +21,7 @@ export function OrderItemsList({ items }: OrderItemsListProps) {
         <View className="flex-col justify-between items-center w-full">
             <Text className="text-2xl font-bold text-tertiary mb-4" > Items</Text>
             <View className="flex-row justify-between items-center w-full mb-4 border-b border-gray-200 pb-2">
-                <Text className="text-xl font-bold text-tertiary w-1/6 text-center" > Image</Text>
+                <Text className="text-xl font-bold text-tertiary w-1/6 text-center" > Img</Text>
                 <Text className="text-xl font-bold text-tertiary w-1/4 text-center" > Product</Text>
                 <Text className="text-xl font-bold text-tertiary w-1/8 text-center" > Qty</Text>
                 <Text className="text-xl font-bold text-tertiary w-1/4 text-center" > Total</Text>

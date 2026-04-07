@@ -17,16 +17,16 @@ export default function Login() {
         })
     }
 
-    const handleLogin = async () => {
-        const res = await authClient.signIn.email({
-            email,
-            password,
-        })
+    // const handleLogin = async () => {
+    //     const res = await authClient.signIn.email({
+    //         email,
+    //         password,
+    //     })
         
-        if(!res.error){
-            router.replace("/")
-        }
-    };
+    //     if(!res.error){
+    //         router.replace("/")
+    //     }
+    // };
 
     return (
         <ThemedView>
@@ -41,7 +41,7 @@ export default function Login() {
                         <AppleIcon size={24} color="#fff" />
                     </TouchableOpacity>
                 </View>
-                <TextInput
+                {/* <TextInput
                     placeholder="Email"
                     value={email}
                     onChangeText={setEmail}
@@ -55,7 +55,7 @@ export default function Login() {
                 />
                 <TouchableOpacity onPress={handleLogin} className="w-full h-12 items-center justify-center bg-tertiary border border-gray-300 rounded-lg px-2 mb-2">
                     <Text className="text-white text-center">Login</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 <Link href="/auth/register" className="text-center text-textColor">¿No tienes cuenta? Registrate</Link>
             </View>
         </ThemedView>

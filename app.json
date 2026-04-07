@@ -4,7 +4,7 @@
     "slug": "cavaAllende",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logo.png",
+    "icon": "./assets/icon.png",
     "scheme": "cavaallende",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -15,22 +15,22 @@
         "ITSAppUsesNonExemptEncryption": false
       },
       "config": {
-        "googleMapsApiKey":  "process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY_IOS"
+        "googleMapsApiKey":  "AIzaSyBKNOpW1kDmnXJzrit_ntDMzPzXU4F7F8c"
       }
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/logo.png",
-        "backgroundImage": "./assets/logo.png",
-        "monochromeImage": "./assets/logo.png"
+        "backgroundColor": "#ffffff",
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundImage": "./assets/adaptive-icon.png",
+        "monochromeImage": "./assets/adaptive-icon.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.ronnhy7.cavaAllende",
       "config": {
         "googleMaps": {
-          "apiKey": "process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY_ANDROID"
+          "apiKey": "AIzaSyBKNOpW1kDmnXJzrit_ntDMzPzXU4F7F8c"
         }
       }
     },
@@ -49,10 +49,10 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/logo.png",
+          "image": "./assets/splash.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#000000",
           "dark": {
             "backgroundColor": "#000000"
           }
