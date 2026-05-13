@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity } from 'react-native'
 import { ThemedView } from '@/components/ui/ThemedView'
 import { authClient } from '@/lib/auth-client';
 import { useRouter } from 'expo-router';
+import HeaderBack from '@/components/ui/HeaderBack';
 
 export default function Phone() {
 
@@ -13,6 +14,8 @@ export default function Phone() {
 
     return (
         <ThemedView>
+
+            <HeaderBack title="Phone Number" path="../(tabs)/config" />
 
             {session?.user?.phoneNumber && (
                 <View className='w-full mx-auto flex-col p-8 rounded-2xl gap-8 mt-4 '>

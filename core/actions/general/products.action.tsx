@@ -1,4 +1,5 @@
 import apiGeneral from "@/core/api/apiGeneral"
+import { FilterPayload } from "@/infrastructure/mappers/order/filterPayload"
 import { DetailProductResponse } from "@/infrastructure/responses/detailProduct.response"
 import { ProductsResponse } from "@/infrastructure/responses/products.response"
 import { ValidateStockResponse } from "@/infrastructure/responses/products/validateeStock.response"
@@ -38,7 +39,7 @@ export const getProductsByName = async (searchText: string, type_id: number | nu
     }
 }
 
-export const validateStock = async (products: any[]) => {
+export const validateStock = async (products: FilterPayload) => {
     try {
         const response = await apiGeneral.post('/products/validate-stock', products)
         const data: ValidateStockResponse = response.data

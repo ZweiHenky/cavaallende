@@ -62,7 +62,7 @@ export default function DetailsProduct() {
       >
         <ProductHero data={data} />
 
-        <Text className='text-3xl p-2 font-bold text-secondary '>
+        <Text className='text-3xl p-2 text-secondary font-fraunces-semibold' >
           Características
         </Text>
 
@@ -71,7 +71,7 @@ export default function DetailsProduct() {
         {data.vintages && <ProductFeature text={data.vintages} numberOfLines={3} />}
         {data.temperature && <ProductFeature text={data.temperature} numberOfLines={3} />}
 
-        <Text className='text-3xl p-2 font-bold text-secondary '>
+        <Text className='text-3xl p-2 text-secondary font-fraunces-semibold' >
           Descripción
         </Text>
 
@@ -79,7 +79,7 @@ export default function DetailsProduct() {
         {data.view && <ProductFeature text={data.view} />}
         {data.mouth && <ProductFeature text={data.mouth} />}
 
-        <Text className='text-3xl p-2 font-bold text-secondary '>
+        <Text className='text-3xl p-2 text-secondary font-fraunces-semibold' >
           Recomendación
         </Text>
 

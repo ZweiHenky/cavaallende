@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Image } from 'react-native';
 import { formatterCurrency } from "@/utils/formatterCurrency";
+import { useImages } from '@/store/useImages';
 
 interface PurchaseItem {
     purchase_item_id?: number;
@@ -8,6 +9,7 @@ interface PurchaseItem {
     quantity: number;
     line_total: number | string;
     unit_price: number | string;
+    product_image?: string;
 }
 
 interface OrderItemsListProps {
@@ -15,6 +17,11 @@ interface OrderItemsListProps {
 }
 
 export function OrderItemsList({ items }: OrderItemsListProps) {
+
+    const { images } = useImages();
+
+    console.log(images[items[0].product_image || ""] );
+
     if (!items || items.length === 0) return null;
 
     return (
@@ -29,7 +36,7 @@ export function OrderItemsList({ items }: OrderItemsListProps) {
             {
                 items.map((item, index) => (
                     <View key={item.purchase_item_id || index} className="flex-row justify-between items-center w-full mb-4">
-                        <Image source={require("@/assets/images/vino.png")} className="w-20 h-20 " />
+                        <Image source={images[item.product_image || ""]} className="w-20 h-20 rounded-lg" />
                         <Text 
                         numberOfLines={2} 
                         ellipsizeMode="tail" 

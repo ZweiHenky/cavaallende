@@ -12,6 +12,11 @@ import { authClient } from '@/lib/auth-client';
 import socket from '@/core/socket/connect';
 import { useChangeStatus } from '@/hooks/sockets/purchases/useChangeStatus';
 import {OneSignal, LogLevel} from 'react-native-onesignal';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useLocationStore } from '@/store/useLocationStore';
+import { usePermissionsStore } from '@/store/usePermissionStore';
+import { PermissionStatus } from '@/infrastructure/interfaces/location.interface';
+import { useNotificationStore } from '@/store/useNotification';
 
 
 function CircleTab({ children, selected, onPress }: any) {
@@ -52,6 +57,24 @@ export default function TabLayout() {
   const { data: session, isPending } = authClient.useSession()
   const router = useRouter()
 
+  const insets = useSafeAreaInsets();
+  
+  const isBottom = insets.bottom > 20;
+
+  const {getLocation, lastKnownLocation} = useLocationStore()
+  const {locationStatus} = usePermissionsStore()
+
+  useEffect(() => {
+    if (!lastKnownLocation && locationStatus === PermissionStatus.GRANTED) {
+      getLocation()
+    }
+  }, [lastKnownLocation, getLocation, locationStatus])
+
+  useEffect(() => {
+    console.log(lastKnownLocation);
+  }, [lastKnownLocation])
+    
+
   useChangeStatus();
 
   useEffect(() => {
@@ -59,9 +82,6 @@ export default function TabLayout() {
       if (session.user.role === 'delivery') {
         router.replace('/deliveries/(tabs)/orders')
       }
-      // if (!session.user.phoneNumber) {
-      //   router.replace('/config/newPhone')
-      // }
     } 
   }, [session,isPending, router])
 
@@ -69,19 +89,21 @@ export default function TabLayout() {
     if (session && !isPending) {
       socket.emit("joinRoom", session.user.id);
     }
-  }, [session,isPending])
+  }, [session])
+  
 
   useEffect(() => {
-    if (session && !isPending) {
-      // Enable verbose logging for debugging (remove in production)
-      OneSignal.Debug.setLogLevel(LogLevel.Verbose);
-      // Initialize with your OneSignal App ID
-      OneSignal.initialize(process.env.EXPO_PUBLIC_ONESIGNAL_ID!);
 
-      OneSignal.login(session.user.id);
-      // Use this method to prompt for push notifications.
-      // We recommend removing this method after testing and instead use In-App Messages to prompt for notification permission.
-      OneSignal.Notifications.requestPermission(false);
+    const checkExternalUserId = async () => {
+      const extrenalUserId = await OneSignal.User.getExternalId();
+      console.log(extrenalUserId);
+      if (!extrenalUserId) {
+        OneSignal.login(session?.user.id || '');
+      }
+    }
+
+    if (session?.user.id) {
+      checkExternalUserId();
     }
   }, [session])
 
@@ -105,7 +127,7 @@ export default function TabLayout() {
             elevation: 0,
             marginHorizontal: 0,
             position: 'absolute',
-            bottom: -20,
+            bottom: isBottom ? -20 : 10,
             borderColor:"transparent",
           },
           headerShown: false, // importante

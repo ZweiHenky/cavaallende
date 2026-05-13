@@ -25,5 +25,7 @@ export interface GetPurchaseDetailResponse {
         delivery_name: string;
         delivery_phone: string;
         purchase_items: IPurchaseItem[];
+        secure_code: string;
+        
     }
 }

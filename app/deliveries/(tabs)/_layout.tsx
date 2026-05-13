@@ -8,6 +8,7 @@ import {LinearGradient} from 'expo-linear-gradient';
 import InboxIcon from '@/assets/icons/InboxIcon';
 import SettingsIcon from '@/assets/icons/SettingsIcon';
 import { authClient } from '@/lib/auth-client';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 function CircleTab({ children, selected, onPress }: any) {
@@ -48,6 +49,10 @@ export default function TabLayout() {
   const { data: session } = authClient.useSession();
   const router = useRouter(); 
 
+  const insets = useSafeAreaInsets();
+  
+  const isBottom = insets.bottom > 20;
+
   useEffect(() => {
     if (session?.user.role !== 'delivery') {
       router.replace("/(tabs)");
@@ -74,7 +79,7 @@ export default function TabLayout() {
             elevation: 0,
             marginHorizontal: 0,
             position: 'absolute',
-            bottom: -20,
+            bottom: isBottom ? -20 : 10,
             borderColor:"transparent",
           },
           headerShown: false, // importante

@@ -4,6 +4,7 @@ import { ThemedView } from '@/components/ui/ThemedView'
 import { authClient } from '@/lib/auth-client';
 import { PhoneVerifyContext } from '@/providers/context/phoneVerify';
 import { useRouter } from 'expo-router';
+import HeaderBack from '@/components/ui/HeaderBack';
 
 export default function VerifyPhone() {
     const [code, setCode] = useState<string>('');
@@ -28,6 +29,8 @@ export default function VerifyPhone() {
     }
   return (
     <ThemedView>
+
+        <HeaderBack title="Phone Number" />
 
         <View className='w-full mx-auto flex-col items-center p-8 rounded-2xl gap-8 mt-4 '>
             <View className='w-full'>

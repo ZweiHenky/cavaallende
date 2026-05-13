@@ -8,6 +8,7 @@ export const usePatchUpdateStatus = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["purchases-today"] });
             queryClient.invalidateQueries({ queryKey: ["purchases-detail"] });
+            queryClient.invalidateQueries({ queryKey: ["active-purchase"] });
         },
         onError: (error) => {
             console.log(error);

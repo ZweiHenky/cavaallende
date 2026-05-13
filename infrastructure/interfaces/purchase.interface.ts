@@ -9,7 +9,10 @@ export interface IPurchase {
     total:             string;
     payment_method:    string;
     payment_reference: string | null;
-    status:            string;
+    status:            TStatus;
     notes:             string | null;
     delivery_id:       string | null;
+    secure_code:       string;
 }
+
+type TStatus = "pending" | "paid" | "accepted" | "on_the_way" | "completed" | "cancelled" | "collecting";

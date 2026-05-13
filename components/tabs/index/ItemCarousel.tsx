@@ -20,7 +20,7 @@ export default function ItemCarousel({item}: {item: Category}) {
             />
             <View className='absolute inset-0 bg-black/50 rounded-2xl' />
         </View>
-        <Text className='text-white text-2xl font-bold text-center px-8'>{item.name}</Text>
+        <Text className='text-white text-3xl text-center px-8 font-fraunces-semibold' >{item.name.charAt(0).toUpperCase() + item.name.slice(1)}</Text>
     </View>
   )
 }

@@ -17,6 +17,7 @@ import CreditCardIcon from "@/assets/icons/CreditCardIcon";
 import { UserIcon } from "@/assets/icons/UserIcon";
 import { usePatchUpdateStatus } from "@/hooks/services/purchases/mutations/usePatchUpdateStatus";
 import { useChangeStatus } from "@/hooks/sockets/purchases/useChangeStatus";
+import { useImages } from "@/store/useImages";
 
 const initialLocation = {
     latitude: 19.40594093690812,
@@ -30,6 +31,7 @@ export default function DetailOrder() {
     const [isTrackingWine, setIsTrackingWine] = useState(false);
     const [isTrackingHouse, setIsTrackingHouse] = useState(false);
     const { updateStatusMutation, isPending } = usePatchUpdateStatus();
+    const { images } = useImages();
 
 
     useTracker(lastKnownLocation, id, "clientLocation");
@@ -125,13 +127,13 @@ export default function DetailOrder() {
                     tracksViewChanges={!isTrackingHouse}
                 >
                     <CustomMarkerPin 
-                        imageSource={require("@/assets/images/maps/house-pine.png")} 
-                        onLoadEnd={() => setIsTrackingHouse(true)} 
+                        imageSource={require("@/assets/images/maps/home.png")} 
+                        
                     />
                 </Marker>
                 
                 {
-                    locationDelivery?.latitude && locationDelivery?.longitude && (
+                    locationDelivery?.latitude && locationDelivery?.longitude &&  (
                         <Marker
                             coordinate={{
                                 latitude: locationDelivery?.latitude,
@@ -139,11 +141,10 @@ export default function DetailOrder() {
                             }}
                             title="Delivery Location"
                             description="Delivery Location"
-                            
                             anchor={{ x: 0, y: 0.5 }}
                         >
                            <CustomMarkerPin 
-                                imageSource={require("@/assets/images/maps/moto-pine.png")} 
+                                imageSource={require("@/assets/images/maps/motorcycle.png")} 
                             />
                         </Marker>
 
@@ -161,30 +162,36 @@ export default function DetailOrder() {
                             title="Delivery Location"
                             description="Delivery Location"
                             tracksViewChanges={!isTrackingWine}
-                            anchor={{ x: 0, y: 0.5 }}
+                            anchor={{ x: 0, y: 1.5 }}
 
                         >
                            <CustomMarkerPin 
-                                imageSource={require("@/assets/images/maps/wine-pine.png")} 
-                                onLoadEnd={() => setIsTrackingWine(true)} 
+                                imageSource={require("@/assets/images/maps/wine.png")} 
+                                
                             />
                         </Marker>
                     )
                 }
 
-                {/* <MapViewDirections
-                    origin={{
-                        latitude: lastKnownLocation?.latitude,
-                        longitude: lastKnownLocation?.longitude,
-                    }}
-                    destination={{
-                        latitude: 19.4018954,
-                        longitude: -99.1666728,
-                    }}
-                    apikey={process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY_ANDROID!}
-                    strokeWidth={5}
-                    strokeColor="blue"
-                /> */}
+                {
+                    locationDelivery?.latitude && locationDelivery?.longitude && 
+                    data?.data?.latitude && data?.data?.longitude && (
+                        <MapViewDirections
+                            origin={{
+                                latitude: locationDelivery?.latitude!,
+                                longitude: locationDelivery?.longitude!,
+                            }}
+                            destination={{
+                                latitude: Number(data?.data?.latitude!),
+                                longitude: Number(data?.data?.longitude!),
+                            }}
+                            apikey={process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY_ANDROID!}
+                            strokeWidth={5}
+                            strokeColor="blue"
+                            
+                        />
+                    )
+                }
                 </MapView >
 
 
@@ -193,10 +200,18 @@ export default function DetailOrder() {
                     {error && <Text>Error: {error.message}</Text>}
 
                     {data && (
-                        <View className="flex-col gap-8 w-full">
-                            <View className=" w-full mb-4 items-center">
+                        <View className="flex-col gap-10 w-full">
+                            <View className=" w-full mb-1 items-center">
                                 <Text className="text-3xl  text-tertiary font-bold text-center" >{data?.data?.status.toUpperCase()}</Text>
                             </View>
+                            <View className="flex-row justify-center gap-4 items-center w-full border border-tertiary p-2 rounded-xl">
+                                {
+                                    data.data.secure_code.split('').map((letter, index) => (
+                                        <Text key={index} className="text-3xl text-primary font-bold" >{letter}</Text>
+                                    ))
+                                }
+                            </View>
+                            
                             <View className="flex-row justify-between items-center w-full">
                                 <View className="flex-row  items-center gap-2">
                                     <UserIcon color="#000" size={24} />
@@ -218,19 +233,20 @@ export default function DetailOrder() {
 
                             <OrderItemsList items={data?.data?.purchase_items || []} /> 
 
-                            <View className="flex-row justify-between items-center w-full mt-4 border-t border-gray-200 pt-4">
+                            
                                 {
                                     data?.data?.status === "accepted" || data?.data?.status === "paid" ? (
-                                        <View className="flex-col justify-between items-center w-full gap-4">
-                                            <Text className="text-2xl text-primary pt-2 font-bold" >Cancel Order</Text>
-                                            <Text className="text-sm text-primary pt-2" >You can cancel the order if the status is &apos;accepted&apos; or &apos;paid&apos;, if the status is &apos;on the way&apos; you can&apos;t cancel the order</Text>
-                                            <TouchableOpacity className="bg-primary p-4 rounded-xl w-full flex items-center justify-center" onPress={() => handleUpdateStatus()}>
-                                                <Text className="text-xl text-white font-bold" >Cancel</Text>
-                                            </TouchableOpacity>
-                                        </View>
+                                        <View className="flex-row justify-between items-center w-full mt-4 border-t border-gray-200 pt-4">
+                                            <View className="flex-col justify-between items-center w-full gap-4">
+                                                <Text className="text-2xl text-primary pt-2 font-bold" >Cancel Order</Text>
+                                                <Text className="text-sm text-primary pt-2" >You can cancel the order if the status is &apos;accepted&apos; or &apos;paid&apos;, if the status is &apos;on the way&apos; you can&apos;t cancel the order</Text>
+                                                <TouchableOpacity className="bg-primary p-4 rounded-xl w-full flex items-center justify-center" onPress={() => handleUpdateStatus()}>
+                                                    <Text className="text-xl text-white font-bold" >Cancel</Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>                                      
                                     ) : ''
                                 }
-                            </View>                                      
 
                         </View>
                     )}

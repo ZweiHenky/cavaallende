@@ -19,7 +19,7 @@ const PermissionsCheckerProvider = ({ children }: PropsWithChildren) => {
 
   useEffect(() => {
     checkLocationPermission();
-  }, []);
+  }, [checkLocationPermission]);
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', (nextAppState) => {

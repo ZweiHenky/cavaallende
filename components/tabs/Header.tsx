@@ -10,9 +10,10 @@ import { useSearchStore } from '@/store/useSearchStore';
 interface HeaderProps {
     title?: string
     showSearch?: boolean
+    showCart?: boolean
 }
 
-export const Header = ({ title, showSearch = false }: HeaderProps) => {
+export const Header = ({ title, showSearch = false, showCart = true }: HeaderProps) => {
 
     const { order } = useShop();
     const router = useRouter();
@@ -54,7 +55,7 @@ export const Header = ({ title, showSearch = false }: HeaderProps) => {
         ) : (
           <>
             {title ? (
-              <Text className='text-3xl font-bold text-tertiary'>
+              <Text className='text-4xl text-tertiary' style={{ fontFamily: 'Fraunces_600SemiBold' }}>
                 {title}
               </Text>
             ) : (
@@ -62,16 +63,26 @@ export const Header = ({ title, showSearch = false }: HeaderProps) => {
                 <ArrowLeftIcon size={28} color="black" />
               </TouchableOpacity>
             )}
+
+            
             <View className='flex-row items-center justify-center gap-4'>
               {showSearch && (
                 <TouchableOpacity onPress={() => handleOpenSearch()}>
                   <SearchIcon color='#c9a24d' size={32} />
                 </TouchableOpacity>
               )}
-              <TouchableOpacity onPress={() => router.push("../shop")}>
+              {showCart && (
+                <TouchableOpacity onPress={() => router.push("../shop")}>
                 <ShopIcon color='#c9a24d' size={32} />
-                <Text className='text-lg font-bold text-tertiary absolute top-[-8px] right-[-8px] bg-white rounded-full px-2'>{order.count}</Text>
+                {order.count > 0 && (
+                  <View className="w-9 h-9 items-center justify-center absolute top-[-18px] right-[-10px] bg-white rounded-full">
+                    <Text className={`font-bold text-tertiary ${order.count > 9 ? 'text-md' : 'text-lg'}`}>
+                      {order.count}
+                    </Text>
+                  </View>
+                )}
               </TouchableOpacity>
+              )}
             </View>
           </>
         )}

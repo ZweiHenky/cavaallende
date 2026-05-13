@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { View, ScrollView, Animated, PanResponder, Dimensions } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 interface DraggableBottomSheetProps {
     children: React.ReactNode;
@@ -7,8 +8,10 @@ interface DraggableBottomSheetProps {
 
 export function DraggableBottomSheet({ children }: DraggableBottomSheetProps) {
     const { height: screenHeight } = Dimensions.get('window');
-    const MAX_HEIGHT = screenHeight * 0.5;
-    
+    const MAX_HEIGHT = screenHeight * 0.7;
+    const MIN_HEIGHT = screenHeight * 0.4;
+    const MINIMIZED_OFFSET = MAX_HEIGHT - MIN_HEIGHT;
+
     const panY = useRef(new Animated.Value(0)).current;
     const offsetY = useRef(0);
 
@@ -33,9 +36,9 @@ export function DraggableBottomSheet({ children }: DraggableBottomSheetProps) {
             }),
             onPanResponderRelease: (e, gestureState) => {
                 panY.flattenOffset();
-                if (offsetY.current > MAX_HEIGHT / 4 || gestureState.vy > 1) {
+                if (offsetY.current > MINIMIZED_OFFSET / 2 || gestureState.vy > 1) {
                     Animated.spring(panY, {
-                        toValue: MAX_HEIGHT - 140, // Deja 140px expuestos cuando se minimiza
+                        toValue: MINIMIZED_OFFSET,
                         useNativeDriver: false,
                     }).start();
                 } else {
@@ -49,8 +52,8 @@ export function DraggableBottomSheet({ children }: DraggableBottomSheetProps) {
     ).current;
 
     const translateY = panY.interpolate({
-        inputRange: [-100, 0, MAX_HEIGHT - 140, MAX_HEIGHT],
-        outputRange: [0, 0, MAX_HEIGHT - 140, MAX_HEIGHT - 140],
+        inputRange: [-100, 0, MINIMIZED_OFFSET, MAX_HEIGHT],
+        outputRange: [0, 0, MINIMIZED_OFFSET, MINIMIZED_OFFSET],
         extrapolate: 'clamp',
     });
 
@@ -62,7 +65,7 @@ export function DraggableBottomSheet({ children }: DraggableBottomSheetProps) {
                 left: 0,
                 right: 0, 
                 zIndex: 900,
-                height: '50%',
+                height: '70%',
                 backgroundColor: "white",
                 borderTopLeftRadius: 20,
                 borderTopRightRadius: 20,
@@ -80,7 +83,7 @@ export function DraggableBottomSheet({ children }: DraggableBottomSheetProps) {
                 style={{ 
                     width: '100%', 
                     alignItems: 'center', 
-                    paddingTop: 12,
+                    paddingTop: 14,
                     paddingBottom: 12,
                     backgroundColor: 'transparent'
                 }}
@@ -88,18 +91,27 @@ export function DraggableBottomSheet({ children }: DraggableBottomSheetProps) {
                 <View style={{ width: 40, height: 5, backgroundColor: '#cbd5e1', borderRadius: 3 }} />
             </View>
 
-            <ScrollView 
+            <KeyboardAwareScrollView 
+                enableOnAndroid={true}
+                extraScrollHeight={220}
+                keyboardShouldPersistTaps="handled"
                 contentContainerStyle={{
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "space-between",
                     alignItems: "center",
                     paddingHorizontal: 20,
-                    paddingBottom: 40,
                 }}
             >
                 {children}
-            </ScrollView>
+                <Animated.View style={{ 
+                    height: panY.interpolate({
+                        inputRange: [0, MINIMIZED_OFFSET],
+                        outputRange: [40, MINIMIZED_OFFSET + 40],
+                        extrapolate: 'clamp'
+                    }) 
+                }} />
+            </KeyboardAwareScrollView>
         </Animated.View>
     );
 }

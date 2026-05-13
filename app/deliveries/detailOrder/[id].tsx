@@ -5,8 +5,8 @@ import { useGetDetailPurchase } from "@/hooks/services/purchases/useGetDetailPur
 import { useLocationStore } from "@/store/useLocationStore";
 import { formatterCurrency } from "@/utils/formatterCurrency";
 import { useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
-import { ActivityIndicator, Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { ActivityIndicator, Alert, KeyboardAvoidingView, Linking, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { CustomMarkerPin } from "@/components/maps/CustomMarkerPin";
 import { DraggableBottomSheet } from "@/components/ui/DraggableBottomSheet";
@@ -15,6 +15,10 @@ import { UserIcon } from "@/assets/icons/UserIcon";
 import PhoneIcon from "@/assets/icons/PhoneIcon";
 import CreditCardIcon from "@/assets/icons/CreditCardIcon";
 import { usePatchUpdateStatus } from "@/hooks/services/purchases/mutations/usePatchUpdateStatus";
+import { usePostEarning } from "@/hooks/services/earningsDeliveries/mutations/usePostEarning";
+import { authClient } from "@/lib/auth-client";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import MapViewDirections from "react-native-maps-directions";
 
 const initialLocation = {
     latitude: 19.40594093690812,
@@ -29,8 +33,16 @@ export default function DetailDelivery() {
     const { updateStatusMutation, isPending } = usePatchUpdateStatus();
     const { lastKnownLocation, getLocation, watchLocation, clearWatchLocation } = useLocationStore()
 
+    const { mutateAsync: postEarningMutateAsync, isPending: isPendingPostEarning } = usePostEarning();
+    const { data: session } = authClient.useSession();
+
+
     const [isTrackingHouse, setIsTrackingHouse] = useState(false);
     const [isTrackingWine, setIsTrackingWine] = useState(false);
+
+    const [code, setCode] = useState("");
+
+    const mapRef = useRef<MapView>(null);
 
     useTracker(lastKnownLocation, id, "deliveryLocation");
 
@@ -86,13 +98,49 @@ export default function DetailDelivery() {
         }
     }, [data]);
 
+    useEffect(() => {
+        if (localtionClient.latitude && localtionClient.longitude) {
+            handleFollowLocation(localtionClient.latitude, localtionClient.longitude);
+        }
+    }, [localtionClient]);
 
     const handleCall = (phoneNumber: string) => {
         Linking.openURL(`tel:${phoneNumber}`);
     };
 
     const handleUpdateStatus = (status: string) => {
-        updateStatusMutation({ id, status });
+
+        if (status !== "completed") {
+            updateStatusMutation({ id, status })
+            return;
+        }
+        
+        if (status === "completed" && dataOrder?.secure_code === code) {
+            postEarningMutateAsync({
+                user_id: session?.user.id!,
+                purchase_id: Number(id),
+                amount: Number(dataOrder?.shipping_cost),
+                status: "pending",
+                type: "delivery",
+            });
+            updateStatusMutation({ id, status })
+        }else{
+            Alert.alert("El codigo no es correcto");
+        }
+
+        
+    };
+
+    const handleFollowLocation = (latitude:number, longitude:number) => {
+        if (!mapRef.current) return;
+
+        mapRef.current.animateCamera({
+            center: {
+                latitude,
+                longitude,
+            },
+            zoom: 15,
+        });
     };
 
     const dataOrder = data?.data;
@@ -103,6 +151,7 @@ export default function DetailDelivery() {
             {lastKnownLocation && (
             <View className="w-full h-dvh rounded-lg mb-2 mt-4 flex-1 relative">
                 <MapView 
+                    ref={mapRef}
                     style={styles.map} 
                     initialRegion={{
                         latitude: lastKnownLocation?.latitude,
@@ -112,8 +161,7 @@ export default function DetailDelivery() {
                 }}
                 showsUserLocation={true}  
                 loadingEnabled={true}   
-                
-                >  
+                >
                 
                 {
                     localtionClient?.latitude && localtionClient?.longitude && (
@@ -124,7 +172,6 @@ export default function DetailDelivery() {
                             }}
                             title="Delivery Location"
                             description="Delivery Location"
-                            pinColor="green"
                         />
                     )
                 }
@@ -141,8 +188,7 @@ export default function DetailDelivery() {
                             anchor={{ x: 0, y: 0.5 }}
                         >
                            <CustomMarkerPin 
-                                imageSource={require("@/assets/images/maps/house-pine.png")} 
-                                onLoadEnd={() => setIsTrackingHouse(true)} 
+                                imageSource={require("@/assets/images/maps/home.png")} 
                             />
                         </Marker>
                     )
@@ -161,25 +207,30 @@ export default function DetailDelivery() {
 
                         >
                             <CustomMarkerPin 
-                                imageSource={require("@/assets/images/maps/wine-pine.png")} 
-                                onLoadEnd={() => setIsTrackingWine(true)} 
+                                imageSource={require("@/assets/images/maps/wine.png")} 
                             />
                         </Marker>
                     )
                 }
-                {/* <MapViewDirections
-                    origin={{
-                        latitude: lastKnownLocation?.latitude,
-                        longitude: lastKnownLocation?.longitude,
-                    }}
-                    destination={{
-                        latitude: 19.4018954,
-                        longitude: -99.1666728,
-                    }}
-                    apikey={process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY_ANDROID!}
-                    strokeWidth={5}
-                    strokeColor="blue"
-                /> */}
+                {
+                    localtionClient?.latitude && localtionClient?.longitude && 
+                    lastKnownLocation?.latitude && lastKnownLocation?.longitude && (
+                        <MapViewDirections
+                            origin={{
+                                latitude: lastKnownLocation?.latitude!,
+                                longitude: lastKnownLocation?.longitude!,
+                            }}
+                            destination={{
+                                latitude: Number(localtionClient?.latitude!),
+                                longitude: Number(localtionClient?.longitude!),
+                            }}
+                            apikey={process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY_ANDROID!}
+                            strokeWidth={5}
+                            strokeColor="blue"
+                            
+                        />
+                    )
+                }
                 </MapView >
 
                 <DraggableBottomSheet>
@@ -189,7 +240,14 @@ export default function DetailDelivery() {
                     {dataOrder?.created_at && (
                         <View className="flex-col gap-8 w-full">
                             <View className=" w-full mb-4 items-center">
-                                <Text className="text-3xl  text-tertiary font-bold text-center" >{dataOrder?.status.toUpperCase()}</Text>
+                                <Text className="text-3xl  text-tertiary font-bold text-center" >{
+                                    dataOrder?.status === "accepted" ? "Nuevo pedido" 
+                                    : dataOrder?.status === "on_the_way" ? "En Camino" 
+                                    : dataOrder?.status === "collecting" ? "Recolectando" 
+                                    : dataOrder?.status === "completed" ? "Completado" 
+                                    : dataOrder?.status === "cancelled" ? "Cancelado" 
+                                    : dataOrder?.status.toUpperCase()
+                                }</Text>
                             </View>
                             <View className="flex-row justify-between items-center w-full">
                                 <View className="flex-row  items-center gap-2">
@@ -206,30 +264,61 @@ export default function DetailDelivery() {
                                     <PhoneIcon color="#fff" size={24} />
                                 </TouchableOpacity>
                                 <View className="flex-row  items-center gap-2 ">
-                                    <Text className="text-2xl text-primary pt-2 font-bold" >{formatterCurrency(Number(dataOrder?.total))}</Text>
+                                    <Text className="text-2xl text-primary pt-2 font-bold" >{formatterCurrency(Number(dataOrder?.shipping_cost))}</Text>
                                 </View>
                             </View>
 
                             <OrderItemsList items={data?.data?.purchase_items || []} />
 
                             {dataOrder?.status === "accepted" && (
-                                <TouchableOpacity disabled={isPending} className={`bg-primary p-4 rounded-xl w-   full  gap-2 flex items-center justify-center ${isPending ? "opacity-50" : ""}`} onPress={() => handleUpdateStatus("on_the_way")}>
-                                    <Text className="text-white text-center"> {
-                                        isPending 
-                                        ? <ActivityIndicator color="#fff" /> 
-                                        : "ON THE WAY"
-                                    }</Text>
+                                <TouchableOpacity
+                                    disabled={isPending}
+                                    className={`bg-[#c9a24d] p-4 rounded-xl w-full gap-2 flex items-center justify-center ${isPending ? "opacity-50" : ""}`}
+                                    onPress={() => handleUpdateStatus("collecting")}
+                                >
+                                    <Text className="text-white text-center font-semibold">
+                                        {isPending ? <ActivityIndicator color="#fff" /> : "INICIAR RECOLECCIÓN"}
+                                    </Text>
+                                </TouchableOpacity>
+                            )}
+
+                            {dataOrder?.status === "collecting" && (
+                                <TouchableOpacity
+                                    disabled={isPending}
+                                    className={`bg-primary p-4 rounded-xl w-full gap-2 flex items-center justify-center ${isPending ? "opacity-50" : ""}`}
+                                    onPress={() => handleUpdateStatus("on_the_way")}
+                                >
+                                    <Text className="text-white text-center font-semibold">
+                                        {isPending ? <ActivityIndicator color="#fff" /> : "EN CAMINO"}
+                                    </Text>
                                 </TouchableOpacity>
                             )}
 
                             {dataOrder?.status === "on_the_way" && (
-                                <TouchableOpacity disabled={isPending} className={`bg-primary p-4 rounded-xl w-   full  gap-2 flex items-center justify-center ${isPending ? "opacity-50" : ""}`} onPress={() => handleUpdateStatus("completed")}>
-                                    <Text className="text-white text-center"> {
-                                        isPending 
-                                        ? <ActivityIndicator color="#fff" /> 
-                                        : "FINISH ORDER"
-                                    }</Text>
-                                </TouchableOpacity>
+                                <View className="flex-row items-center gap-3 mt-4">
+                                    <TextInput
+                                        className="flex-1 bg-primary/10 px-4 py-3 rounded-xl text-base"
+                                        placeholder="Código"
+                                        placeholderTextColor="#888"
+                                        value={code}
+                                        onChangeText={setCode}
+                                        keyboardType="number-pad"
+                                        returnKeyType="done"
+                                    />
+                                    <TouchableOpacity
+                                        disabled={isPending}
+                                        className={`px-5 py-3 rounded-xl items-center justify-center ${
+                                            isPending ? "bg-primary/60" : "bg-primary"
+                                        }`}
+                                        onPress={() => handleUpdateStatus("completed")}
+                                    >
+                                        {isPending ? (
+                                            <ActivityIndicator color="#fff" />
+                                        ) : (
+                                            <Text className="text-white font-semibold">FINALIZAR</Text>
+                                        )}
+                                    </TouchableOpacity>
+                                </View>
                             )}
 
                         </View>

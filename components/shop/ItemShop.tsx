@@ -2,6 +2,7 @@ import MinusIcon from "@/assets/icons/MinusIcon"
 import PlusIcon from "@/assets/icons/PlusIcon"
 import TrashIcon from "@/assets/icons/TrashIcon"
 import { IProduct } from "@/infrastructure/interfaces/product.interface"
+import { useImages } from "@/store/useImages"
 import { useShop } from "@/store/useShop"
 import { formatterCurrency } from "@/utils/formatterCurrency"
 import { Image, Text, TouchableOpacity, View } from "react-native"
@@ -15,11 +16,28 @@ interface ItemProps {
 export default function ItemShop({ item }: { item: ItemProps }) {
 
         const { removeProduct, addQuantity, removeQuantity } = useShop();
+        const { images } = useImages();
+
+        const handleRemoveProduct = (e: any) => {
+            e.stopPropagation()
+            if (item.quantity === 0) {
+                return
+            }
+            removeQuantity(Number(item.product.product_id))
+        }
+
+        const handleAddQuantity = (e: any) => {
+            e.stopPropagation()
+            if (item.quantity === item.product.stock) {
+                return
+            }
+            addQuantity(Number(item.product.product_id))
+        }
 
       return(
       <View className='w-[95%] mx-auto bg-white rounded-2xl py-4 px-4 flex-row min-h-38'>
         <Image
-          source={require('@/assets/images/vino.png')}
+          source={images[item.product.image]}
           className='w-32 h-32'
         />
 
@@ -36,11 +54,11 @@ export default function ItemShop({ item }: { item: ItemProps }) {
 
             <View className='w-full flex-row justify-between items-end flex-1'>
               <View className='flex-row items-center gap-4 bg-tertiary rounded-full px-2 py-2'>
-                <TouchableOpacity onPress={() => removeQuantity(Number(item.product.product_id))}>
+                <TouchableOpacity onPress={handleRemoveProduct}>
                   <MinusIcon color='white' size={24} />
                 </TouchableOpacity>
-                <Text className='text-white text-lg'>{item.quantity}</Text>
-                <TouchableOpacity onPress={() => addQuantity(Number(item.product.product_id))}>
+                <Text className='text-white text-lg '>{item.quantity}</Text>
+                <TouchableOpacity onPress={handleAddQuantity}>
                   <PlusIcon color='white' size={24} />
                 </TouchableOpacity>
               </View>

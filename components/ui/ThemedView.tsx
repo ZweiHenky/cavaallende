@@ -7,7 +7,6 @@ interface ThemedViewProps {
 
 export function ThemedView({ children, className }: ThemedViewProps) {
 
-
   return (
     <SafeAreaView 
       edges={

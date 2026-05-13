@@ -15,7 +15,7 @@
         "ITSAppUsesNonExemptEncryption": false
       },
       "config": {
-        "googleMapsApiKey":  "AIzaSyBKNOpW1kDmnXJzrit_ntDMzPzXU4F7F8c"
+        "googleMapsApiKey":  "AIzaSyBvt2XrB3fgxg4qqwfP9ssSDbYm0QzIs9k"
       }
     },
     "android": {
@@ -30,9 +30,10 @@
       "package": "com.ronnhy7.cavaAllende",
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyBKNOpW1kDmnXJzrit_ntDMzPzXU4F7F8c"
+          "apiKey": "AIzaSyChn3BoZYnRGQ3CL8W57CAaDQ2UMM8MXGw"
         }
-      }
+      },
+      "softwareKeyboardLayoutMode": "pan"
     },
     "web": {
       "output": "static",
@@ -70,6 +71,12 @@
         "expo-location",
         {
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ],
+      [
+        "onesignal-expo-plugin",
+        {
+          "mode": "development"
         }
       ]
     ],

@@ -15,7 +15,7 @@ export default function CheckoutForm() {
 
     const router = useRouter()
 
-    const { order, clearOrder } = useShop()
+    const { order, clearOrder, shippingCost } = useShop()
     const { data: user } = authClient.useSession()
     const [loading, setLoading] = useState(false)
     const filteredProducts = filterPayload(order)
@@ -27,13 +27,10 @@ export default function CheckoutForm() {
 
         setLoading(true)
 
-        if (!user) return Alert.alert("Error", "Inicia sesión para realizar el pago")
+        if (!user) return router.replace('/auth/login')
 
         if (!user.user.phoneNumber) {
-            Alert.alert("Error", "Debes agregar un número de teléfono para realizar el pago")
-            setTimeout(() => {
-                router.replace('/config/newPhone')
-            }, 500);
+            router.replace('/config/newPhone')
             setLoading(false)
             return
         }
@@ -57,7 +54,7 @@ export default function CheckoutForm() {
 
             console.log(metadata.order)
 
-            const { paymentIntent, ephemeralKey, customer } = await PaymentSheet({amount: order.total, currency: "mxn", metadata})
+            const { paymentIntent, ephemeralKey, customer } = await PaymentSheet({shippingCost, amount: order.total, currency: "mxn", metadata})
 
             const {error} = await initPaymentSheet({
                 paymentIntentClientSecret: paymentIntent,

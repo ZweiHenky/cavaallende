@@ -13,15 +13,14 @@ import { useLocationStore } from '@/store/useLocationStore';
 
 export default function Index() {
 
-    const { order, clearOrder } = useShop()
+    const { order, clearOrder, setShippingCost, shippingCost } = useShop()
     const { lastKnownLocation } = useLocationStore()
 
-    const [costShipping, setCostShipping] = useState(0)
 
     useEffect(() => {
         if (lastKnownLocation) {
             const precioEnvio = calculateShippingPrice(lastKnownLocation.latitude, lastKnownLocation.longitude, 19.405914616000153, -99.17565470371922)
-            setCostShipping(Number(precioEnvio.precio))
+            setShippingCost(Number(precioEnvio.precio))
         }
     }, [lastKnownLocation])
 
@@ -58,7 +57,7 @@ export default function Index() {
 
       {
         order.products.length > 0 && (
-            <ShowBill subtotal={order.total} costShipping={costShipping} />
+            <ShowBill subtotal={order.total} shippingCost={shippingCost} />
         )
       }
     </ThemedView>

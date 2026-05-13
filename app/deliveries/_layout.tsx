@@ -3,12 +3,20 @@ import { useOnCreatePurchase } from "@/hooks/sockets/purchases/useOnCreatePurcha
 import { useEffect } from "react";
 import { authClient } from "@/lib/auth-client";
 import { OneSignal, LogLevel } from "react-native-onesignal";
+import { useLocationStore } from "@/store/useLocationStore";
 
 export default function DeliveriesLayout() {
 
     const { data: session, isPending } = authClient.useSession()
+    const {getLocation, lastKnownLocation} = useLocationStore()
 
     useOnCreatePurchase();
+
+    useEffect(() => {
+        if (!lastKnownLocation) {
+          getLocation()
+        }
+      }, [lastKnownLocation, getLocation])
 
     useEffect(() => {
         if (session && !isPending) {
@@ -27,9 +35,9 @@ export default function DeliveriesLayout() {
       }, [session])
 
     return (
-        <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="detailOrder" options={{ headerShown: false }} />
+        <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="detailOrder" />
         </Stack>
     );
 }

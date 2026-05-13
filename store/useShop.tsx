@@ -7,6 +7,8 @@ import { IOrder } from "@/infrastructure/interfaces/order.interface";
 
 interface IShop {
     order: IOrder;
+    shippingCost: number;
+    setShippingCost: (shippingCost: number) => void;
     setOrder: (order: IOrder) => void;
     addProduct: (product: IProduct) => void;
     removeProduct: (id: number) => void;
@@ -18,6 +20,7 @@ interface IShop {
 export const useShop = create<IShop>()(
     persist(
         (set,get) => ({
+            shippingCost: 0,
             order: {
                 products: [],
                 count: 0,
@@ -83,6 +86,7 @@ export const useShop = create<IShop>()(
                 }
             },
             clearOrder: () => set({ order: { products: [], count: 0, total: 0 } }),
+            setShippingCost: (shippingCost: number) => set({ shippingCost }),
         }),
         {
             name: "shop",

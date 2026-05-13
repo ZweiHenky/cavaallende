@@ -48,4 +48,20 @@ export const assignDelivery = async (id: number, delivery_id: string): Promise<P
         throw error;
     }
 };
+export const getActivePurchaseByDelivery = async (delivery_id: string) => {
+    try {
+        const res = await apiGeneral.get(`/purchases/active/delivery/${delivery_id}`);
+        return res.data;
+    } catch (error) {
+        throw error;
+    }
+};
 
+export const getPurchaseHistoryByUser = async (user_id: string): Promise<GetOrdersByStatusResponse> => {
+    try {
+        const res = await apiGeneral.get<GetOrdersByStatusResponse>(`/purchases/history/user/${user_id}`);
+        return res.data;
+    } catch (error) {
+        throw error;
+    }
+};

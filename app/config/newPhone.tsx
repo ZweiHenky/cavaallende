@@ -5,6 +5,7 @@ import { useContext, useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { getUserByPhone } from "@/core/actions/general/users.action";
 import { ThemedView } from "@/components/ui/ThemedView";
+import HeaderBack from "@/components/ui/HeaderBack";
 
 export default function NewPhone() {
 
@@ -49,6 +50,8 @@ export default function NewPhone() {
 
     return (
         <ThemedView >
+
+            <HeaderBack title="Phone Number" path="../(tabs)/config" />
 
             <View className="w-full flex-col items-center justify-center gap-4 mt-4 p-8">
                 <View className='w-full mt-4'>

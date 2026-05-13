@@ -43,8 +43,8 @@ export default function ContainerCardWines({ addProduct, categoryActive, selecte
         renderItem={({ item }: { item: IProduct }) => (
           <ItemCardWine item={item} addProduct={addProduct} />
         )}
-        ListHeaderComponent={<View className='h-8' />}
-        ItemSeparatorComponent={() => <View className='h-12' />}
+        ListHeaderComponent={<View className='h-12' />}
+        ItemSeparatorComponent={() => <View className='h-24' />}
         style={{
           height: '100%',
         }}

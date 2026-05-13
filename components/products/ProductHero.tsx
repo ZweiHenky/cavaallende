@@ -4,6 +4,7 @@ import { formatterCurrency } from '@/utils/formatterCurrency'
 import MinusIcon from '@/assets/icons/MinusIcon'
 import PlusIcon from '@/assets/icons/PlusIcon'
 import { useShop } from '@/store/useShop'
+import { useImages } from '@/store/useImages'
 
 interface ProductHeroProps {
   data: any;
@@ -11,12 +12,13 @@ interface ProductHeroProps {
 
 export default function ProductHero({ data }: ProductHeroProps) {
   const { addQuantity, removeQuantity, order, addProduct } = useShop();
+  const images = useImages();
   const product = order.products.find((p: any) => p.product.product_id === data.product_id);
 
   return (
-    <View className='w-full h-52 flex-row justify-center items-center px-2'>
+    <View className='w-full h-64 flex-row justify-center items-center px-2'>
       <Image 
-        source={require('@/assets/images/vino.png')} 
+        source={images.getImage(data.image)} 
         className='w-1/2' 
         resizeMode='contain' 
       />
@@ -24,9 +26,9 @@ export default function ProductHero({ data }: ProductHeroProps) {
         <Text 
           numberOfLines={2}
           ellipsizeMode="tail"
-          className='text-[22px] font-bold text-primary leading-tight'
+          className='text-3xl text-primary leading-tight font-fraunces-semibold'
         > 
-          {data.name}
+          {data.name.charAt(0).toUpperCase() + data.name.slice(1)}
         </Text>
         <Text className='text-[15px] font-medium text-gray-500 mb-0.5'>
           {data.producer}
@@ -41,12 +43,12 @@ export default function ProductHero({ data }: ProductHeroProps) {
         </Text>
         {
           product && product.quantity > 0 ? (
-            <View className='flex-row items-center justify-between w-[95%] bg-tertiary rounded-xl px-4 py-2.5 shadow-sm'>
-              <TouchableOpacity onPress={() => removeQuantity(data.product_id)}>
+            <View className='flex-row items-center w-[95%] bg-tertiary rounded-xl px-4 py-2.5 shadow-sm'>
+              <TouchableOpacity onPress={() => removeQuantity(data.product_id)} className='w-1/3 items-center'>
                 <MinusIcon color='white' size={20} />
               </TouchableOpacity>
-              <Text className='text-white text-base font-bold'>{product?.quantity}</Text>
-              <TouchableOpacity onPress={() => addQuantity(data.product_id)} disabled={product.quantity >= data.stock!}>
+              <Text className='text-white text-base font-bold text-center w-1/3'>{product?.quantity}</Text>
+              <TouchableOpacity onPress={() => addQuantity(data.product_id)} disabled={product.quantity >= data.stock!} className='w-1/3 items-center'>
                 <PlusIcon color='white' size={20} />
               </TouchableOpacity>
             </View>

@@ -3,36 +3,58 @@ import Error from '@/components/ui/Error';
 import Loading from '@/components/ui/Loading';
 import { ThemedView } from '@/components/ui/ThemedView'
 import { useGetPurchasesToday } from '@/hooks/services/purchases/useGetPutchasesToday';
+import { useGetActivePurchaseByDelivery } from '@/hooks/services/purchases/useGetActivePurchaseByDelivery';
+import { useGetPurchaseHistoryByUser } from '@/hooks/services/purchases/useGetPurchaseHistoryByUser';
+import { authClient } from '@/lib/auth-client';
 import { IPurchase } from '@/infrastructure/interfaces/purchase.interface';
 import React, { useState } from 'react'
 import { FlatList, Text, TouchableOpacity, View } from 'react-native'
+import { useRouter } from 'expo-router';
 
 const tabs = [
-  { key: "active", label: "Active" },
-  { key: "history", label: "History" }
+  { key: "nuevos", label: "Nuevos" },
+  { key: "history", label: "Historial" }
 ];
 
 export default function Orders() {
 
-  const [active, setActive] = useState<string>("active");
-  
-    const { data, isLoading, error } = useGetPurchasesToday(
-        active === "active" ? "paid" : "accepted,on_the_way"
-    );
+  const { data: session } = authClient.useSession();
+  const router = useRouter();
 
-    if (isLoading) {
-        return <ThemedView>
-            <Loading />
-        </ThemedView>;
-    }
+  const [active, setActive] = useState<string>("nuevos");
+  
+  const { data: nuevosData, isLoading: isLoadingNuevos, error: errorNuevos } = useGetPurchasesToday("accepted");
+  const { data: historyData, isLoading: isLoadingHistory, error: errorHistory } = useGetPurchaseHistoryByUser(session?.user?.id as string);
+  const { data: activePurchaseData } = useGetActivePurchaseByDelivery(session?.user?.id as string);
+
+  const isLoading = active === "nuevos" ? isLoadingNuevos : isLoadingHistory;
+  const error = active === "nuevos" ? errorNuevos : errorHistory;
+  const currentData = active === "nuevos" ? nuevosData?.data : historyData?.data;
+
+  if (isLoadingNuevos && isLoadingHistory) {
+      return <ThemedView>
+          <Loading />
+      </ThemedView>;
+  }
 
   const handleChangeStatus = (status: string) => {
         if (status === active) return;
         setActive(status);
     }
 
+    console.log(activePurchaseData);
+
   return (
     <ThemedView>
+
+        {activePurchaseData?.data && (
+            <TouchableOpacity 
+                className="bg-[#c9a24d] p-4 rounded-xl mb-4 w-[90%] mx-auto items-center"
+                onPress={() => router.push(`/deliveries/detailOrder/${activePurchaseData.data.purchase_id}`)}
+            >
+                <Text className="text-white font-bold text-lg">Pedido Activo</Text>
+            </TouchableOpacity>
+        )}
 
         <View className="flex-row p-1 rounded-2xl mb-4 w-[90%] mx-auto">
             {tabs.map(tab => {
@@ -63,9 +85,9 @@ export default function Orders() {
             {isLoading && <Loading />}
             {error && <Error message={error.message} />}
             {
-                data?.data && data.data.length > 0 ? (
+                currentData && currentData.length > 0 ? (
                     <FlatList<IPurchase>
-                        data={data?.data}
+                        data={currentData}
                         renderItem={({ item }) => (
                             <DeliveryItem item={item} />
                         )} 

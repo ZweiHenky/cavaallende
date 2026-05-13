@@ -3,7 +3,7 @@ import CheckoutForm from "./stripe/CheckoutForm";
 import { formatterCurrency } from "@/utils/formatterCurrency";
 import { useLocationStore } from "@/store/useLocationStore";
 
-export default function ShowBill({subtotal, costShipping}: {subtotal: number, costShipping: number}) {
+export default function ShowBill({subtotal, shippingCost}: {subtotal: number, shippingCost: number}) {
 
     const { address } = useLocationStore()
 
@@ -23,12 +23,12 @@ export default function ShowBill({subtotal, costShipping}: {subtotal: number, co
             </View>
             <View className='flex-row justify-between'>
             <Text className='text-lg  text-black  '>Envio:</Text>
-            <Text className='text-lg  text-black  '>{formatterCurrency(costShipping)}</Text>
+            <Text className='text-lg  text-black  '>{formatterCurrency(shippingCost)}</Text>
             </View>
             <View className='h-[0.5px] bg-slate-200 my-2 rounded-full ' />
             <View className='flex-row justify-between'>
             <Text className='text-xl font-bold text-black  '>Total:</Text>
-            <Text className='text-xl font-bold text-black  '>{formatterCurrency(subtotal + costShipping)}</Text>
+            <Text className='text-xl font-bold text-black  '>{formatterCurrency(subtotal + shippingCost)}</Text>
             </View>
             <CheckoutForm />
         </View>

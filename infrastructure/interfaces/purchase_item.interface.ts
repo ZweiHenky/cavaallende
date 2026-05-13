@@ -6,7 +6,7 @@ export interface IPurchaseItem {
     unit_price: string;
     line_total: string;
     product_name?: string;
-    product_image?: string | null;
+    product_image?: string ;
     category_id?: number;
     type_id?: number;
     created_at?: string;

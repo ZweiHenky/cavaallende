@@ -30,6 +30,10 @@ export const useLocationStore = create<LocationState>()((set, get) => ({
     const location = await getCurrentLocation();
     set({ lastKnownLocation: location });
 
+    if (get().address === null) {
+      get().setAddress();
+    }
+
     return location;
   },
 
