@@ -65,7 +65,7 @@ export default function DeliveryItem({ item }: DeliveryItemProps) {
 
                 <View className=" px-3 py-1 rounded-full">
                     <Text className="text-lg font-semibold text-[#5a0f1b] capitalize">
-                    {item.status}
+                    {item.status === 'accepted' ? 'Nuevo' : item.status}
                     </Text>
                 </View>
 

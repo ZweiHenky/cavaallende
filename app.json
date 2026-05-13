@@ -15,7 +15,7 @@
         "ITSAppUsesNonExemptEncryption": false
       },
       "config": {
-        "googleMapsApiKey":  "AIzaSyBvt2XrB3fgxg4qqwfP9ssSDbYm0QzIs9k"
+        "googleMapsApiKey":  ""
       }
     },
     "android": {
@@ -30,7 +30,7 @@
       "package": "com.ronnhy7.cavaAllende",
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyChn3BoZYnRGQ3CL8W57CAaDQ2UMM8MXGw"
+          "apiKey": ""
         }
       },
       "softwareKeyboardLayoutMode": "pan"
@@ -64,7 +64,7 @@
         "@stripe/stripe-react-native",
         {
           "merchantIdentifier": "cavaallende.com.app",
-          "publishableKey": "pk_test_51SuVrLDwFxNG6oviYmciTqnvcdnv9faqO80fYh9SmIoNWhgwPyVr2uPRDQvUX2ExnT4DrJgWdkAI9yj35wOyW0zj00lqnxDcDj"
+          "publishableKey": ""
         }
       ],
       [
