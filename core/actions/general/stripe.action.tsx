@@ -18,15 +18,15 @@ interface PaymentSheetProps {
     }
 }
 
-export const PaymentSheet = async ({shippingCost, amount, currency, metadata}: PaymentSheetProps) : Promise<PaymentSheetResponse> => {
+export const PaymentSheet = async ({ shippingCost, amount, currency, metadata }: PaymentSheetProps): Promise<PaymentSheetResponse> => {
     const res = await apiGeneral.post("/stripe/create-payment-sheet", {
         shippingCost,
         amount,
         currency,
         metadata
     })
-    
-    const data:PaymentSheetResponse = await res.data.data
+
+    const data: PaymentSheetResponse = await res.data.data
 
     return data
 }
@@ -37,7 +37,7 @@ interface CreateConnectAccountProps {
     userId: string
 }
 
-export const createConnectAccount = async ({email, name, userId}: CreateConnectAccountProps) : Promise<CreateAccountDeliveryResponse> => {
+export const createConnectAccount = async ({ email, name, userId }: CreateConnectAccountProps): Promise<CreateAccountDeliveryResponse> => {
     try {
         const res = await apiGeneral.post("/stripe/connect/createAccount", {
             email,
@@ -45,55 +45,55 @@ export const createConnectAccount = async ({email, name, userId}: CreateConnectA
             user_id: userId
         })
 
-        const data:CreateAccountDeliveryResponse = await res.data.data
+        const data: CreateAccountDeliveryResponse = await res.data.data
 
         return data
     } catch (error: any) {
-        return {accountId: "", message: "Error al crear la cuenta"}
+        return { accountId: "", message: "Error al crear la cuenta" }
     }
 }
 
 
-export const createLinkConnect = async (accountId: string) : Promise<CreateLinkResponse> => {
+export const createLinkConnect = async (accountId: string): Promise<CreateLinkResponse> => {
     try {
         const res = await apiGeneral.post("/stripe/connect/createLink", {
             accountId
         })
 
-        const data:CreateLinkResponse = await res.data.data
+        const data: CreateLinkResponse = await res.data.data
         return data
     } catch (error: any) {
-        return {onboardingUrl: "", message: "Error al crear la cuenta", status: 500}
+        return { onboardingUrl: "", message: "Error al crear la cuenta", status: 500 }
     }
 }
 
-export const getConnectAccount = async (accountId: string) : Promise<GetAccountResponse> => {
+export const getConnectAccount = async (accountId: string): Promise<GetAccountResponse> => {
     try {
         const res = await apiGeneral.get(`/stripe/connect/account/${accountId}`)
-        const data:GetAccountResponse = await res.data
+        const data: GetAccountResponse = await res.data
         return data
     } catch (error: any) {
-        return {status: "error", message: "Error al obtener la cuenta"}
+        return { status: "error", message: "Error al obtener la cuenta" }
     }
 }
 
-export const updateStripeAccount = async (accountId: string) : Promise<UpdateStatusResponse> => {
+export const updateStripeAccount = async (accountId: string): Promise<UpdateStatusResponse> => {
     try {
         const res = await apiGeneral.patch(`/stripe/connect/status/${accountId}`)
-        const data:UpdateStatusResponse = await res.data
+        const data: UpdateStatusResponse = await res.data
         return data
     } catch (error: any) {
-        return {status: "error", message: "Error al actualizar la cuenta"}
+        return { status: "error", message: "Error al actualizar la cuenta" }
     }
 }
 
-export const summaryEarnings = async (user_id: string) : Promise<any> => {
+export const summaryEarnings = async (user_id: string): Promise<any> => {
     try {
         const res = await apiGeneral.get(`/earnings-deliveries/summary/${user_id}`)
-        const data:any = await res.data
+        const data: any = await res.data
         return data
     } catch (error: any) {
-        return {status: "error", message: "Error al obtener las ganancias"}
+        return { status: "error", message: "Error al obtener las ganancias" }
     }
 }
 
@@ -112,7 +112,19 @@ export const transferPayout = async (user_id: string, amount: number) => {
 
         return data.data
     } catch (error: any) {
-       
+        console.log(error.response.data.message)
         throw new Error("Error al trasnferir, contacte soporte")
-    }    
+    }
+}
+
+
+export const getBalanceStripe = async (accountId: string) => {
+    try {
+        const res = await apiGeneral.get(`/stripe/balance/${accountId}`)
+        const data = await res.data
+        return data.data
+    } catch (error: any) {
+        console.log(error.response.data.message)
+        throw new Error("Error al obtener el balance de Stripe")
+    }
 }

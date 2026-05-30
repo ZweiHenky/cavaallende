@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query"
 
 
 export const useGetProductsByCategory = (category: number, selectedType: number | null) => {
-    const { data, isLoading, error } = useQuery({
+    const { data, isLoading, error, refetch } = useQuery({
         queryKey: ['products', category, selectedType],
         queryFn: () => getProductsByCategory(category, selectedType)
     })
@@ -11,6 +11,7 @@ export const useGetProductsByCategory = (category: number, selectedType: number 
     return {
         data,
         isLoading,
-        error
+        error,
+        refetch
     }
 }

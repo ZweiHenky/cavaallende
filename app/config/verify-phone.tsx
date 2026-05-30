@@ -1,15 +1,16 @@
 import { View, Text, TextInput, TouchableOpacity } from 'react-native'
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { ThemedView } from '@/components/ui/ThemedView'
 import { authClient } from '@/lib/auth-client';
 import { PhoneVerifyContext } from '@/providers/context/phoneVerify';
-import { useRouter } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import HeaderBack from '@/components/ui/HeaderBack';
 
 export default function VerifyPhone() {
     const [code, setCode] = useState<string>('');
     const {phoneVerify} = useContext(PhoneVerifyContext)!;
     const [error, setError] = useState<string | undefined>("");
+    const [timer, setTimer] = useState<number>(30);
     const router = useRouter();
 
     const verifyPhone = async () => {
@@ -27,6 +28,36 @@ export default function VerifyPhone() {
 
         router.replace('/config/phone');
     }
+
+    const resendCode = async () => {
+        const { data, error } = await authClient.phoneNumber.sendOtp({
+            phoneNumber: phoneVerify,
+        });
+
+        if (error) {
+            setError(error.message || "Error al enviar el código");
+            return;
+        }
+
+        if (data?.message === "code sent") {
+            setError("Código reenviado exitosamente");
+        }
+    }
+
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setTimer((prevTimer) => {
+                if (prevTimer > 1) {
+                    return prevTimer - 1;
+                }
+                clearInterval(interval);
+                return 0;
+            });
+        }, 1000);
+        return () => clearInterval(interval);
+    }, []);
+    
   return (
     <ThemedView>
 
@@ -48,6 +79,19 @@ export default function VerifyPhone() {
                 />
             </View>
             {error && <Text className='text-red-500'>{error}</Text>}
+
+            <View className='w-full'>
+                {
+                    timer === 0 ? (
+                        <TouchableOpacity onPress={resendCode}  >
+                            <Text className='text-xl font-bold text-tertiary text-center '>Reenviar código</Text>
+                        </TouchableOpacity>
+                    ) : (
+                        <Text className='text-xl font-bold text-tertiary text-center '>{timer}s <Text className="text-secondary">Para reenviar el código</Text></Text>
+                    )
+                }
+            </View>
+
             <View className='w-full'>
                 <TouchableOpacity
                     onPress={verifyPhone}
@@ -56,6 +100,8 @@ export default function VerifyPhone() {
                     <Text className='text-xl font-bold text-white text-center '>Verificar</Text>
                 </TouchableOpacity>
             </View>
+
+
         </View>
       
     </ThemedView>

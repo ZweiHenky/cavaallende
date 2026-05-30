@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "465214587146",
+    "project_id": "cavaallende-badfd",
+    "storage_bucket": "cavaallende-badfd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:465214587146:android:dbb6cbac318813cad0baf3",
+        "android_client_info": {
+          "package_name": "com.ronnhy7.cavaAllende"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-DPzCjfFOE1wEbA1Xx7XTeQ5MFSwvA30"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

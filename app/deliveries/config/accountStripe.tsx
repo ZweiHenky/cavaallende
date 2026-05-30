@@ -11,6 +11,7 @@ import { useGetLink } from "@/hooks/services/stripe/mutations/useGetLink";
 import FormNewDelivery from "@/components/config/stripe/formNewDelivery";
 import { useGetSummary } from "@/hooks/services/earningsDeliveries/useGetSummary";
 import { useTransfer } from "@/hooks/services/payoutsDeliveries/mutations/useTransfer";
+import { useGetBalance } from "@/hooks/services/stripe/useGetBalance";
 
 
 export default function AccountStripe() {
@@ -20,94 +21,97 @@ export default function AccountStripe() {
     const { mutateAsync, isPending: isPendingLink, error: linkError } = useGetLink();
     const [link, setLink] = useState<string | null>(null);
     const { data: summary, isLoading: isLoadingSummary, error: errorSummary } = useGetSummary(session?.user.id!);
-    const { transfer, isPending: isPendingTransfer } = useTransfer();
+    // const { transfer, isPending: isPendingTransfer } = useTransfer();
+    const { data: balance, isLoading: isLoadingBalance, error: balanceError } = useGetBalance({ accountId: data?.data.stripe_id! });
+
+    console.log("Balance", balance?.available[0].amount);
 
     const handleActivateAccount = async () => {
 
-        if(data?.data.is_active){
+        if (data?.data.is_active) {
             Alert.alert("Cuenta activa", "Ya tienes una cuenta activa");
             return;
         }
 
         const res = await mutateAsync(data?.data.stripe_id!);
 
-        if(res.status === 500){
+        if (res.status === 500) {
             Alert.alert("Error", "Error al generar el enlace");
             return;
         }
 
-        if(res.onboardingUrl){
+        if (res.onboardingUrl) {
             setLink(res.onboardingUrl);
         }
 
     }
 
-    const handleTransfer = async () => {
+    // const handleTransfer = async () => {
 
-        if(summary?.data?.available === 0){
-            Alert.alert("Saldo insuficiente", "No tienes saldo para transferir");
-            return;
-        }
+    //     if(summary?.data?.available === 0){
+    //         Alert.alert("Saldo insuficiente", "No tienes saldo para transferir");
+    //         return;
+    //     }
 
-        await transfer({user_id: session?.user.id!, amount: summary?.data?.available!});
+    //     await transfer({user_id: session?.user.id!, amount: summary?.data?.available!});
 
-    }
+    // }
 
     useEffect(() => {
-        if(session?.user.role === "user"){
+        if (session?.user.role === "user") {
             refetch();
         }
     }, [session, refetch]);
 
-    if(isLoading){
+    if (isLoading) {
         return (
             <ThemedView>
                 <HeaderBack title="Cuenta de repartidor" path="../(tabs)/config" />
-                <Loading/>
+                <Loading />
             </ThemedView>
         );
     }
 
-    if(error){
+    if (error) {
         return (
             <ThemedView>
                 <HeaderBack title="Cuenta de repartidor" path="../(tabs)/config" />
-                <Error message="Error al cargar la cuenta de repartidor"/>
+                <Error message="Error al cargar la cuenta de repartidor" />
             </ThemedView>
         );
     }
 
-    if(isLoadingSummary){
+    if (isLoadingSummary) {
         return (
             <ThemedView>
                 <HeaderBack title="Balance de cuenta" path="../(tabs)/config" />
-                <Loading/>
+                <Loading />
             </ThemedView>
         );
     }
 
-    if(errorSummary){
+    if (errorSummary) {
         return (
             <ThemedView>
                 <HeaderBack title="Balance de cuenta" path="../(tabs)/config" />
-                <Error message="Error al cargar las ganancias"/>
+                <Error message="Error al cargar las ganancias" />
             </ThemedView>
         );
     }
 
-    if(isPendingLink){
+    if (isPendingLink) {
         return (
             <ThemedView>
                 <HeaderBack title="Cuenta de repartidor" path="../(tabs)/config" />
-                <Loading/>
+                <Loading />
             </ThemedView>
         );
     }
 
-    if(link && data?.data.stripe_id){
+    if (link && data?.data.stripe_id) {
         return (
             <ThemedView>
-                <FormNewDelivery url={link} accountId={data?.data.stripe_id!}/>
+                <FormNewDelivery url={link} accountId={data?.data.stripe_id!} />
             </ThemedView>
         );
     }
@@ -120,7 +124,7 @@ export default function AccountStripe() {
                 <View className="w-full flex-col gap-4 items-center">
                     <View className="w-full flex-row justify-between gap-4">
                         <View className="border border-tertiary rounded-2xl p-4 flex-1 items-center justify-center bg-[#fefaef]">
-                            <Text className="text-2xl font-bold text-[#c9a24d]">{formatterCurrency(summary?.data?.available || 0)}</Text>
+                            <Text className="text-2xl font-bold text-[#c9a24d]">{formatterCurrency(balance?.available[0].amount / 100 || 0)}</Text>
                             <Text className="text-xs text-gray-500 mt-2 text-center">Saldo disponible</Text>
                         </View>
                         <View className="border border-tertiary rounded-2xl p-4 flex-1 items-center justify-center bg-[#fefaef]">
@@ -133,7 +137,7 @@ export default function AccountStripe() {
                             {data?.data.is_active ? 'Cuenta Activa' : 'Se requiere activar cuenta'}
                         </Text>
                     </View>
-                    <TouchableOpacity
+                    {/* <TouchableOpacity
                         onPress={data?.data.is_active ? handleTransfer : handleActivateAccount}
                         className="w-full mt-4 bg-tertiary rounded-2xl p-4"
                         disabled={isPendingLink || isPendingTransfer}
@@ -145,9 +149,9 @@ export default function AccountStripe() {
                                 {data?.data.is_active ? 'Transferir saldo' : 'Activar cuenta'}
                             </Text>
                         )}
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
             </View>
         </ThemedView>
-    );  
+    );
 }

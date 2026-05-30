@@ -5,13 +5,13 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { ThemedView } from '@/components/ui/ThemedView';
 import { Header } from '@/components/tabs/Header';
-import {LinearGradient} from 'expo-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
 import SettingsIcon from '@/assets/icons/SettingsIcon';
 import InboxIcon from '@/assets/icons/InboxIcon';
 import { authClient } from '@/lib/auth-client';
 import socket from '@/core/socket/connect';
 import { useChangeStatus } from '@/hooks/sockets/purchases/useChangeStatus';
-import {OneSignal, LogLevel} from 'react-native-onesignal';
+import { OneSignal, LogLevel } from 'react-native-onesignal';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocationStore } from '@/store/useLocationStore';
 import { usePermissionsStore } from '@/store/usePermissionStore';
@@ -58,11 +58,11 @@ export default function TabLayout() {
   const router = useRouter()
 
   const insets = useSafeAreaInsets();
-  
+
   const isBottom = insets.bottom > 20;
 
-  const {getLocation, lastKnownLocation} = useLocationStore()
-  const {locationStatus} = usePermissionsStore()
+  const { getLocation, lastKnownLocation } = useLocationStore()
+  const { locationStatus } = usePermissionsStore()
 
   useEffect(() => {
     if (!lastKnownLocation && locationStatus === PermissionStatus.GRANTED) {
@@ -73,7 +73,7 @@ export default function TabLayout() {
   useEffect(() => {
     console.log(lastKnownLocation);
   }, [lastKnownLocation])
-    
+
 
   useChangeStatus();
 
@@ -81,16 +81,21 @@ export default function TabLayout() {
     if (session && !isPending) {
       if (session.user.role === 'delivery') {
         router.replace('/deliveries/(tabs)/orders')
+        return
       }
-    } 
-  }, [session,isPending, router])
+      if (session.user.role === 'admin') {
+        router.replace('/admin/(tabs)/orders')
+        return
+      }
+    }
+  }, [session, isPending, router])
 
   useEffect(() => {
     if (session && !isPending) {
       socket.emit("joinRoom", session.user.id);
     }
   }, [session])
-  
+
 
   useEffect(() => {
 
@@ -128,10 +133,10 @@ export default function TabLayout() {
             marginHorizontal: 0,
             position: 'absolute',
             bottom: isBottom ? -20 : 10,
-            borderColor:"transparent",
+            borderColor: "transparent",
           },
           headerShown: false, // importante
-          animation:"none",
+          animation: "none",
           tabBarBackground: () => (
             <LinearGradient
               colors={["#f5f2eb15", "#f5f2eb70", "#f5f2eb"]}

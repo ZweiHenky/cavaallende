@@ -4,7 +4,7 @@ import { useTracker } from "@/hooks/location/useTracker";
 import { useGetDetailPurchase } from "@/hooks/services/purchases/useGetDetailPurchase";
 import { useLocationStore } from "@/store/useLocationStore";
 import { formatterCurrency } from "@/utils/formatterCurrency";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Alert, KeyboardAvoidingView, Linking, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
@@ -19,6 +19,7 @@ import { usePostEarning } from "@/hooks/services/earningsDeliveries/mutations/us
 import { authClient } from "@/lib/auth-client";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import MapViewDirections from "react-native-maps-directions";
+import { usePatchAssignDelivery } from "@/hooks/services/purchases/mutations/usePatchAssignDelivery";
 
 const initialLocation = {
     latitude: 19.40594093690812,
@@ -35,6 +36,7 @@ export default function DetailDelivery() {
 
     const { mutateAsync: postEarningMutateAsync, isPending: isPendingPostEarning } = usePostEarning();
     const { data: session } = authClient.useSession();
+    const { mutateAsync: assignDeliveryMutateAsync, isPending: isPendingAssignDelivery, error: errorAssignDelivery } = usePatchAssignDelivery();
 
 
     const [isTrackingHouse, setIsTrackingHouse] = useState(false);
@@ -108,10 +110,40 @@ export default function DetailDelivery() {
         Linking.openURL(`tel:${phoneNumber}`);
     };
 
-    const handleUpdateStatus = (status: string) => {
+    const handleUpdateStatus = async (status: string) => {
+        
 
         if (status !== "completed") {
+
+            if (status === "collecting") {
+               try {
+
+                await assignDeliveryMutateAsync({
+                    id: Number(id),
+                    delivery_id: session?.user.id!,
+                });
+
+            } catch (error: any) {
+                if (error?.response?.data?.message === "The purchase already has an assigned delivery ID") {
+                    Alert.alert("Error", "El pedido ya tiene un repartidor asignado.");
+                    return;
+                }
+
+                if (error?.response?.data?.message === "The delivery has an active purchase") {
+                    Alert.alert("Error", "El repartidor tiene un pedido asignado.");
+                    return;
+                }
+
+                Alert.alert("Error", "No se pudo asignar la entrega");
+                return;
+            }
+
+            }
+
             updateStatusMutation({ id, status })
+
+            console.log("Updating status");
+
             return;
         }
         
@@ -119,11 +151,13 @@ export default function DetailDelivery() {
             postEarningMutateAsync({
                 user_id: session?.user.id!,
                 purchase_id: Number(id),
-                amount: Number(dataOrder?.shipping_cost),
+                amount: Number(dataOrder?.shipping_cost) * 0.80,
                 status: "pending",
                 type: "delivery",
             });
             updateStatusMutation({ id, status })
+
+            router.replace(`/deliveries/orderResume/${id}`);
         }else{
             Alert.alert("El codigo no es correcto");
         }
@@ -260,11 +294,17 @@ export default function DetailDelivery() {
                                 </View>
                             </View>
                             <View className="flex-row justify-between items-center w-full">
-                                <TouchableOpacity className="bg-primary p-2 rounded-xl w-2/6  gap-2 flex items-center justify-center" onPress={() => handleCall(dataOrder?.user_phone)}>
-                                    <PhoneIcon color="#fff" size={24} />
-                                </TouchableOpacity>
+                                {
+                                    dataOrder?.status === "on_the_way" || dataOrder?.status === "collecting" ? (
+                                        <TouchableOpacity className="bg-primary p-2 rounded-xl w-2/6  gap-2 flex items-center justify-center" onPress={() => handleCall(dataOrder?.user_phone)}>
+                                            <PhoneIcon color="#fff" size={24} />
+                                        </TouchableOpacity>
+                                    ) 
+                                    : 
+                                    <View className="bg-gray-200 p-2 rounded-xl w-2/6  gap-2 flex items-center justify-center " />
+                                }
                                 <View className="flex-row  items-center gap-2 ">
-                                    <Text className="text-2xl text-primary pt-2 font-bold" >{formatterCurrency(Number(dataOrder?.shipping_cost))}</Text>
+                                    <Text className="text-2xl text-primary pt-2 font-bold" >{formatterCurrency(Number(dataOrder?.shipping_cost) * 0.80)}</Text>
                                 </View>
                             </View>
 
@@ -272,12 +312,12 @@ export default function DetailDelivery() {
 
                             {dataOrder?.status === "accepted" && (
                                 <TouchableOpacity
-                                    disabled={isPending}
-                                    className={`bg-[#c9a24d] p-4 rounded-xl w-full gap-2 flex items-center justify-center ${isPending ? "opacity-50" : ""}`}
+                                    disabled={isPendingAssignDelivery}
+                                    className={`bg-[#c9a24d] p-4 rounded-xl w-full gap-2 flex items-center justify-center ${isPendingAssignDelivery ? "opacity-50" : ""}`}
                                     onPress={() => handleUpdateStatus("collecting")}
                                 >
                                     <Text className="text-white text-center font-semibold">
-                                        {isPending ? <ActivityIndicator color="#fff" /> : "INICIAR RECOLECCIÓN"}
+                                        {isPendingAssignDelivery ? <ActivityIndicator color="#fff" /> : "INICIAR RECOLECCIÓN"}
                                     </Text>
                                 </TouchableOpacity>
                             )}

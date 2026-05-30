@@ -17,11 +17,23 @@ import CreditCardIcon from "@/assets/icons/CreditCardIcon";
 import { UserIcon } from "@/assets/icons/UserIcon";
 import { usePatchUpdateStatus } from "@/hooks/services/purchases/mutations/usePatchUpdateStatus";
 import { useChangeStatus } from "@/hooks/sockets/purchases/useChangeStatus";
-import { useImages } from "@/store/useImages";
+import { TStatus } from "@/infrastructure/interfaces/purchase.interface";
 
 const initialLocation = {
     latitude: 19.40594093690812,
     longitude: -99.17566032883565,
+}
+
+
+
+const messagesStatus: Record<TStatus, string> = {
+    "accepted": "Buscando repartidor",
+    "collecting": "Recolectando tu pedido",
+    "cancelled": "Pedido cancelado",
+    "paid": "Preparando tu pedido",
+    "pending": "Revisando tu pedido",
+    "completed": "Pedido completado",
+    "on_the_way": "En camino",
 }
 
 export default function DetailOrder() {
@@ -31,7 +43,6 @@ export default function DetailOrder() {
     const [isTrackingWine, setIsTrackingWine] = useState(false);
     const [isTrackingHouse, setIsTrackingHouse] = useState(false);
     const { updateStatusMutation, isPending } = usePatchUpdateStatus();
-    const { images } = useImages();
 
 
     useTracker(lastKnownLocation, id, "clientLocation");
@@ -84,7 +95,7 @@ export default function DetailOrder() {
                         idResume: id,
                     },
                 });
-            }, 5000);
+            }, 1000);
         }
     }, [data?.data?.status]);
     
@@ -99,6 +110,17 @@ export default function DetailOrder() {
             status: "cancelled",
         });
     };
+
+    const detailOrder = data?.data;
+    const deliveryDestination = detailOrder?.status === "collecting" ? 
+        {
+            latitude: Number(initialLocation?.latitude),
+            longitude: Number(initialLocation?.longitude),
+        } :
+        {
+            latitude: Number(detailOrder?.latitude),
+            longitude: Number(detailOrder?.longitude),
+        };
 
     return (
         <ThemedView>
@@ -119,8 +141,8 @@ export default function DetailOrder() {
                 
                 <Marker
                     coordinate={{
-                        latitude: Number(data?.data?.latitude),
-                        longitude: Number(data?.data?.longitude),
+                        latitude: Number(detailOrder?.latitude),
+                        longitude: Number(detailOrder?.longitude),
                     }}
                     title="Order Location"
                     description="Order Location"
@@ -133,22 +155,22 @@ export default function DetailOrder() {
                 </Marker>
                 
                 {
-                    locationDelivery?.latitude && locationDelivery?.longitude &&  (
+                    locationDelivery?.latitude && locationDelivery?.longitude &&  
+                    (detailOrder?.status === "on_the_way" ||
+                    detailOrder?.status === "collecting") && (
                         <Marker
                             coordinate={{
                                 latitude: locationDelivery?.latitude,
                                 longitude: locationDelivery?.longitude,
                             }}
-                            title="Delivery Location"
-                            description="Delivery Location"
+                            title="Delivery User Location"
+                            description="Delivery User Location"
                             anchor={{ x: 0, y: 0.5 }}
                         >
                            <CustomMarkerPin 
                                 imageSource={require("@/assets/images/maps/motorcycle.png")} 
                             />
                         </Marker>
-
-                        
                     )
                 }
 
@@ -175,15 +197,18 @@ export default function DetailOrder() {
 
                 {
                     locationDelivery?.latitude && locationDelivery?.longitude && 
-                    data?.data?.latitude && data?.data?.longitude && (
+                    detailOrder?.latitude && detailOrder?.longitude &&
+                    (detailOrder?.status === "on_the_way" ||
+                    detailOrder?.status === "collecting") && (
                         <MapViewDirections
+
                             origin={{
                                 latitude: locationDelivery?.latitude!,
                                 longitude: locationDelivery?.longitude!,
                             }}
                             destination={{
-                                latitude: Number(data?.data?.latitude!),
-                                longitude: Number(data?.data?.longitude!),
+                                latitude: Number(deliveryDestination?.latitude!),
+                                longitude: Number(deliveryDestination?.longitude!),
                             }}
                             apikey={process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY_ANDROID!}
                             strokeWidth={5}
@@ -199,14 +224,14 @@ export default function DetailOrder() {
                     {isLoading && <Text>Loading...</Text>}
                     {error && <Text>Error: {error.message}</Text>}
 
-                    {data && (
+                    {detailOrder && (
                         <View className="flex-col gap-10 w-full">
                             <View className=" w-full mb-1 items-center">
-                                <Text className="text-3xl  text-tertiary font-bold text-center" >{data?.data?.status.toUpperCase()}</Text>
+                                <Text className="text-3xl  text-tertiary font-bold text-center" >{messagesStatus[detailOrder?.status as keyof typeof messagesStatus]}</Text>
                             </View>
                             <View className="flex-row justify-center gap-4 items-center w-full border border-tertiary p-2 rounded-xl">
                                 {
-                                    data.data.secure_code.split('').map((letter, index) => (
+                                    detailOrder?.secure_code?.split('').map((letter, index) => (
                                         <Text key={index} className="text-3xl text-primary font-bold" >{letter}</Text>
                                     ))
                                 }
@@ -215,27 +240,33 @@ export default function DetailOrder() {
                             <View className="flex-row justify-between items-center w-full">
                                 <View className="flex-row  items-center gap-2">
                                     <UserIcon color="#000" size={24} />
-                                    <Text className="text-xl text-primary" >{data?.data?.delivery_name || 'No delivery assigned'}</Text>
+                                    <Text className="text-xl text-primary" >{detailOrder?.delivery_name || 'No delivery assigned'}</Text>
                                 </View>
                                 <View className="flex-row  items-center gap-2 ">
                                     <CreditCardIcon color="#000" size={24} />
-                                    <Text className="text-xl text-primary" >{data?.data?.payment_method === "stripe" ? "Card" : "Cash"}</Text>
+                                    <Text className="text-xl text-primary" >{detailOrder?.payment_method === "stripe" ? "Card" : "Cash"}</Text>
                                 </View>
                             </View>
                             <View className="flex-row justify-between items-center w-full">
-                                <TouchableOpacity className="bg-primary p-2 rounded-xl w-2/6  gap-2 flex items-center justify-center" onPress={() => handleCall(data?.data?.delivery_phone!)}>
-                                    <PhoneIcon color="#fff" size={24} />
-                                </TouchableOpacity>
+                                {
+                                    detailOrder?.status === "on_the_way" || detailOrder?.status === "collecting" ? (
+                                        <TouchableOpacity className="bg-primary p-2 rounded-xl w-2/6  gap-2 flex items-center justify-center" onPress={() => handleCall(detailOrder?.delivery_phone!)}>
+                                            <PhoneIcon color="#fff" size={24} />
+                                        </TouchableOpacity>
+                                    ) 
+                                    : 
+                                    <View className="bg-gray-200 p-2 rounded-xl w-2/6  gap-2 flex items-center justify-center " />
+                                }
                                 <View className="flex-row  items-center gap-2 ">
-                                    <Text className="text-2xl text-primary pt-2 font-bold" >{formatterCurrency(Number(data?.data?.total))}</Text>
+                                    <Text className="text-2xl text-primary pt-2 font-bold" >{formatterCurrency(Number(detailOrder?.total))}</Text>
                                 </View>
                             </View>
 
-                            <OrderItemsList items={data?.data?.purchase_items || []} /> 
+                            <OrderItemsList items={detailOrder?.purchase_items || []} /> 
 
                             
                                 {
-                                    data?.data?.status === "accepted" || data?.data?.status === "paid" ? (
+                                    detailOrder?.status === "accepted" || detailOrder?.status === "paid" ? (
                                         <View className="flex-row justify-between items-center w-full mt-4 border-t border-gray-200 pt-4">
                                             <View className="flex-col justify-between items-center w-full gap-4">
                                                 <Text className="text-2xl text-primary pt-2 font-bold" >Cancel Order</Text>

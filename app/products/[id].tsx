@@ -8,6 +8,9 @@ import Loading from '@/components/ui/Loading'
 import Error from '@/components/ui/Error'
 import ProductHero from '@/components/products/ProductHero'
 import ProductFeature from '@/components/products/ProductFeature'
+import NoseIcon from '@/assets/icons/NoseIcon'
+import EyeIcon from '@/assets/icons/EyeIcon'
+import TongueIcon from '@/assets/icons/TongueIcon'
 
 export default function DetailsProduct() {
   const { id } = useLocalSearchParams()
@@ -66,24 +69,24 @@ export default function DetailsProduct() {
           Características
         </Text>
 
-        {data.variant && <ProductFeature text={data.variant} numberOfLines={3} />}
-        {data.fermentation && <ProductFeature text={data.fermentation} numberOfLines={3} />}
-        {data.vintages && <ProductFeature text={data.vintages} numberOfLines={3} />}
-        {data.temperature && <ProductFeature text={data.temperature} numberOfLines={3} />}
+        {data.variant && <ProductFeature text={data.variant} numberOfLines={3} type='grapes' />}
+        {data.fermentation && <ProductFeature text={data.fermentation} numberOfLines={3} type='barrel' />}
+        {data.vintages && <ProductFeature text={data.vintages} numberOfLines={3} type='calendar' />}
+        {data.temperature && <ProductFeature text={data.temperature} numberOfLines={3} type='thermo-control' />}
 
         <Text className='text-3xl p-2 text-secondary font-fraunces-semibold' >
           Descripción
         </Text>
 
-        {data.noise && <ProductFeature text={data.noise} />}
-        {data.view && <ProductFeature text={data.view} />}
-        {data.mouth && <ProductFeature text={data.mouth} />}
+        {data.noise && <ProductFeature type='nose' text={data.noise} /> }
+        {data.view && <ProductFeature type='eye' text={data.view} />}
+        {data.mouth && <ProductFeature type='mouth' text={data.mouth} />}
 
         <Text className='text-3xl p-2 text-secondary font-fraunces-semibold' >
           Recomendación
         </Text>
 
-        {data.recomendation && <ProductFeature text={data.recomendation} />}
+        {data.recomendation && <ProductFeature text={data.recomendation} type='like' />}
 
       </ScrollView>
     </ThemedView>

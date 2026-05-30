@@ -1,10 +1,12 @@
 import { IProduct } from '@/infrastructure/interfaces/product.interface'
-import React from 'react'
-import { FlatList, View } from 'react-native'
+import React, { useState } from 'react'
+import { FlatList, RefreshControl, View } from 'react-native'
 import ItemCardWine from './ItemCardWine'
 import { useGetProductsByCategory } from '@/hooks/services/products/useGetProductsByCategory'
 import Loading from '@/components/ui/Loading'
 import Error from '@/components/ui/Error'
+import { useImages } from '@/store/useImages'
+import { usePullToRefresh } from '@/hooks/refresh/usePullToRefresh'
 
 
 interface ContainerCardWinesProps {
@@ -17,7 +19,10 @@ export default function ContainerCardWines({ addProduct, categoryActive, selecte
   
   const category = categoryActive || 1
 
-  const { data, isLoading, error } = useGetProductsByCategory(category, selectedType)
+  const { data, isLoading, error, refetch } = useGetProductsByCategory(category, selectedType)
+  const { images, getImage } = useImages();
+  
+  const { loadingRefresh, pullToRefresh } = usePullToRefresh(refetch);
 
   if (isLoading) {
     return (
@@ -37,12 +42,19 @@ export default function ContainerCardWines({ addProduct, categoryActive, selecte
     )
   }
 
+
   return (
-    <FlatList
+    <FlatList 
+        refreshControl={
+          <RefreshControl refreshing={loadingRefresh} onRefresh={pullToRefresh} />
+        }
         data={data?.data.products}
-        renderItem={({ item }: { item: IProduct }) => (
-          <ItemCardWine item={item} addProduct={addProduct} />
-        )}
+        renderItem={({ item }: { item: IProduct }) => {
+          const imageProduct = getImage(item.image);
+          return (
+            <ItemCardWine item={item} addProduct={addProduct} image={imageProduct} />
+          )
+        }}
         ListHeaderComponent={<View className='h-12' />}
         ItemSeparatorComponent={() => <View className='h-24' />}
         style={{

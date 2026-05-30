@@ -29,9 +29,9 @@ export function OrderItemsList({ items }: OrderItemsListProps) {
             <Text className="text-2xl font-bold text-tertiary mb-4" > Items</Text>
             <View className="flex-row justify-between items-center w-full mb-4 border-b border-gray-200 pb-2">
                 <Text className="text-xl font-bold text-tertiary w-1/6 text-center" > Img</Text>
-                <Text className="text-xl font-bold text-tertiary w-1/4 text-center" > Product</Text>
-                <Text className="text-xl font-bold text-tertiary w-1/8 text-center" > Qty</Text>
-                <Text className="text-xl font-bold text-tertiary w-1/4 text-center" > Total</Text>
+                <Text className="text-xl font-bold text-tertiary w-2/4 text-center" > Product</Text>
+                <Text className="text-xl font-bold text-tertiary w-1/4 text-center" > Qty</Text>
+                {/* <Text className="text-xl font-bold text-tertiary w-1/4 text-center" > Total</Text> */}
             </View>
             {
                 items.map((item, index) => (
@@ -40,12 +40,12 @@ export function OrderItemsList({ items }: OrderItemsListProps) {
                         <Text 
                         numberOfLines={2} 
                         ellipsizeMode="tail" 
-                        className="text-xl  text-primary w-1/4 " > {item.product_name}</Text>
-                        <Text className="text-xl  text-primary w-1/8 text-center" > {item.quantity}</Text>
-                        <View className="flex-col justify-between items-center w-1/4 text-center ">
+                        className="text-xl  text-primary w-2/4  text-center" > {item.product_name}</Text>
+                        <Text className="text-xl  text-primary w-1/4 text-center" > {item.quantity}</Text>
+                        {/* <View className="flex-col justify-between items-center w-1/4 text-center ">
                             <Text className="text-xl font-bold text-primary" >{formatterCurrency(Number(item.line_total))}</Text>
                             <Text className="text-sm font-bold text-gray-500" >{formatterCurrency(Number(item.unit_price))}</Text>
-                        </View>
+                        </View> */}
                     </View>
                 ))
             }

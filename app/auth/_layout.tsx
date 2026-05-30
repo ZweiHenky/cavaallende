@@ -1,10 +1,12 @@
 import { authClient } from '@/lib/auth-client';
 import { Stack, useRouter } from 'expo-router'
 import React, { useEffect } from 'react'
+import { useUpdateUserRole } from '@/hooks/services/users/useUpdateUserRole';
 
 export default function Layout() {
 
   const { data: session, isPending } = authClient.useSession();
+  const { mutateAsync: updateRole } = useUpdateUserRole();
 
   const router = useRouter();
 
@@ -13,10 +15,11 @@ export default function Layout() {
     if (session && !isPending) {
 
       if(session.user.role === null){
-        authClient.updateUser({
-          role: "user"
-        })
-         router.replace('/(tabs)')
+         updateRole({ userId: session.user.id, role: "user" }).then(() => {
+             router.replace('/(tabs)')
+         }).catch((error) => {
+             console.error("Error updating user role:", error);
+         });
          return;
       }
 

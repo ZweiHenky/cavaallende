@@ -7,7 +7,7 @@ export const useGetPurchasesByStatus = (
   userId: string,
   options?: any
 ) => {
-   const { data, isLoading, error } = useQuery<GetOrdersByStatusResponse>({
+   const { data, isLoading, error, refetch } = useQuery<GetOrdersByStatusResponse>({
     queryKey: ["purchases", status, userId],
     queryFn: () => getPurchasesByStatus(status, userId),
     enabled: !!userId,
@@ -17,6 +17,7 @@ export const useGetPurchasesByStatus = (
   return {
     data,
     isLoading,
-    error
+    error,
+    refetch
   }
 };

@@ -1,4 +1,5 @@
 import apiGeneral from "@/core/api/apiGeneral";
+import { GetHistoryByDeliveryResponse } from "@/infrastructure/responses/purchases/getHistoryByDelivery";
 import { GetOrdersByStatusResponse } from "@/infrastructure/responses/purchases/getOrdersByStatus.response";
 import { GetPurchaseDetailResponse } from "@/infrastructure/responses/purchases/getPurchaseDetail.response";
 import { PatchAssignDeliveryResponse } from "@/infrastructure/responses/purchases/patchAssignDelivery.response";
@@ -60,6 +61,15 @@ export const getActivePurchaseByDelivery = async (delivery_id: string) => {
 export const getPurchaseHistoryByUser = async (user_id: string): Promise<GetOrdersByStatusResponse> => {
     try {
         const res = await apiGeneral.get<GetOrdersByStatusResponse>(`/purchases/history/user/${user_id}`);
+        return res.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getPurchaseHistoryByDelivery = async (delivery_id: string): Promise<GetHistoryByDeliveryResponse> => {
+    try {
+        const res = await apiGeneral.get<GetHistoryByDeliveryResponse>(`/purchases/history/delivery/${delivery_id}`);
         return res.data;
     } catch (error) {
         throw error;

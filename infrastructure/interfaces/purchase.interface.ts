@@ -15,4 +15,4 @@ export interface IPurchase {
     secure_code:       string;
 }
 
-type TStatus = "pending" | "paid" | "accepted" | "on_the_way" | "completed" | "cancelled" | "collecting";
+export type TStatus = "pending" | "paid" | "accepted" | "on_the_way" | "completed" | "cancelled" | "collecting";

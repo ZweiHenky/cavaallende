@@ -1,4 +1,4 @@
-import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, RefreshControl, Text, TouchableOpacity, View } from "react-native";
 import { useGetPurchasesByStatus } from "@/hooks/services/purchases/useGetPurchasesByStatus";
 import { ThemedView } from "@/components/ui/ThemedView";
 import { authClient } from "@/lib/auth-client";
@@ -8,6 +8,7 @@ import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import OrderItem from "@/components/orders/OrderItem";
 import Unauthenticated from "@/components/ui/unauthenticated";
+import { usePullToRefresh } from "@/hooks/refresh/usePullToRefresh";
 
 const tabs = [
   { key: "active", label: "Active" },
@@ -19,13 +20,15 @@ export default function Orders() {
   const { data: session, isPending: isLoadingSession } = authClient.useSession();
   const [active, setActive] = useState<string>("active");
 
-  const { data, isLoading, error } = useGetPurchasesByStatus(
+  const { data, isLoading, error, refetch } = useGetPurchasesByStatus(
     active === "active"
-      ? "pending,paid,on_the_way,accepted"
+      ? "pending,paid,on_the_way,accepted,collecting"
       : "cancelled,completed",
     session?.user!.id!,
     { enabled: !!session?.user?.id }
   );
+
+  const { loadingRefresh, pullToRefresh } = usePullToRefresh(refetch);
 
   if (isLoadingSession) {
     return (
@@ -61,14 +64,12 @@ export default function Orders() {
               key={tab.key}
               onPress={() => handleChangeStatus(tab.key)}
               disabled={isActive}
-              className={`flex-1 items-center py-2 rounded-xl ${
-                isActive ? "bg-[#5a0f1b]" : ""
-              }`}
+              className={`flex-1 items-center py-2 rounded-xl ${isActive ? "bg-[#5a0f1b]" : ""
+                }`}
             >
               <Text
-                className={`text-xl font-bold ${
-                  isActive ? "text-white" : "text-gray-500"
-                }`}
+                className={`text-xl font-bold ${isActive ? "text-white" : "text-gray-500"
+                  }`}
               >
                 {tab.label}
               </Text>
@@ -82,6 +83,9 @@ export default function Orders() {
 
       {data?.data && data.data.length > 0 ? (
         <FlatList<IPurchase>
+          refreshControl={
+            <RefreshControl refreshing={loadingRefresh} onRefresh={pullToRefresh} />
+          }
           data={data.data}
           renderItem={({ item }) => <OrderItem item={item} status={active} />}
           keyExtractor={({ purchase_id }) => purchase_id.toString()}

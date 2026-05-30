@@ -9,32 +9,31 @@ import { IconSymbol } from "../ui/icon-symbol";
 
 interface DeliveryItemProps {
     item: IPurchase;
+    active?: IPurchase | undefined;
 }   
 
-export default function DeliveryItem({ item }: DeliveryItemProps) {
+export default function DeliveryItem({ item, active }: DeliveryItemProps) {
 
     const router = useRouter();
-    const { mutate: assignDelivery, isPending } = usePatchAssignDelivery();
+    const { mutateAsync: assignDelivery, isPending } = usePatchAssignDelivery();
     const { data: session } = authClient.useSession();
 
-    const handleAcceptOrder = () => {
+    const handleAcceptOrder = async () => {
 
     if (!session?.user.id) return;
 
-    assignDelivery(
+    try {
+    await assignDelivery(
         {
         id: item.purchase_id,
         delivery_id: session.user.id
-        },
-        {
-        onSuccess: () => {
-            router.push(`/deliveries/detailOrder/${item.purchase_id}`);
-        },
-        onError: () => {
-            Alert.alert("Error", "Error al aceptar el pedido");
-        }
         }
     );
+    
+    router.push(`/deliveries/detailOrder/${item.purchase_id}`);
+    } catch (error) {
+        Alert.alert("Error", "Error al aceptar el pedido");
+    }
     };
 
     return (
@@ -42,7 +41,8 @@ export default function DeliveryItem({ item }: DeliveryItemProps) {
 
             <TouchableOpacity
                 className="flex-row justify-between items-center"
-                onPress={() => router.push(`/deliveries/detailOrder/${item.purchase_id}`)}
+                onPress={ () => router.push(`/deliveries/detailOrder/${item.purchase_id}`)}
+                activeOpacity={0.8}
             >
 
                 {/* Left side */}
@@ -52,7 +52,7 @@ export default function DeliveryItem({ item }: DeliveryItemProps) {
                 </Text>
 
                 <Text className="text-lg font-bold text-gray-800">
-                    {formatterCurrency(Number(item.total))}
+                    {formatterCurrency(Number(item.shipping_cost) * 0.80)}
                 </Text>
 
                 <Text className="text-xs text-gray-400">
@@ -76,23 +76,28 @@ export default function DeliveryItem({ item }: DeliveryItemProps) {
                 </View>
 
             </TouchableOpacity>
+            
 
-            {item.status === "paid" && (
-                <TouchableOpacity
-                disabled={isPending}
-                className="bg-[#c9a24d] rounded-xl py-3 mt-4"
-                onPress={handleAcceptOrder}
-                activeOpacity={0.8}
-                >
-                {isPending ? (
-                    <ActivityIndicator color="white" size="small" />
-                ) : (
-                    <Text className="text-white text-center font-semibold">
-                    Accept Order
-                    </Text>
-                )}
-                </TouchableOpacity>
-            )}
+            {
+                !active && (
+                item.status === "paid" && (
+                    <TouchableOpacity
+                        disabled={isPending}
+                        className="bg-[#c9a24d] rounded-xl py-3 mt-4"
+                        onPress={handleAcceptOrder}
+                        activeOpacity={0.8}
+                        >
+                        {isPending ? (
+                            <ActivityIndicator color="white" size="small" />
+                        ) : (
+                            
+                            <Text className="text-white text-center font-semibold">
+                            Aceptar pedido
+                            </Text>
+                        )}
+                    </TouchableOpacity>
+                ))  
+            }
 
         </View>
     )

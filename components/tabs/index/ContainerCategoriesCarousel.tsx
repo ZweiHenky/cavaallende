@@ -1,5 +1,5 @@
 import React from 'react'
-import { Dimensions, Text, useWindowDimensions, View } from 'react-native'
+import {useWindowDimensions, View } from 'react-native'
 import { useSharedValue } from "react-native-reanimated";
 import Carousel, { ICarouselInstance, Pagination } from "react-native-reanimated-carousel";
 import ItemCarousel from './ItemCarousel';
@@ -48,18 +48,18 @@ export default function ContainerCategoriesCarousel() {
             // pagingEnabled={true}
             // snapEnabled={true}
             mode="parallax"
-            width={window - 30}
+            width={window - 40}
             containerStyle={{
                 backgroundColor: "transparent",
                 width: "100%",
-                paddingBottom: 10,
+                paddingBottom: 20,
                 justifyContent: "center",
                 alignItems: "center",
             }}
             height={150}
             modeConfig={{
-                parallaxScrollingScale: 0.9,
-                parallaxScrollingOffset: 70,
+                parallaxScrollingScale: 1.05,
+                parallaxScrollingOffset: 0,
             }}
             onProgressChange={(offsetProgress, absoluteProgress) => {
                 progress.value = absoluteProgress;
@@ -74,7 +74,7 @@ export default function ContainerCategoriesCarousel() {
         <Pagination.Basic
             progress={progress}
             data={data || []}
-            size={20}
+            size={15}
             dotStyle={{
                 borderRadius: 100,
                 backgroundColor: "#5a0f1b",
@@ -86,7 +86,7 @@ export default function ContainerCategoriesCarousel() {
             }}
             containerStyle={[
                 {
-                    gap: 5,
+                    gap: 10,
                     marginBottom: 10,
                 },
             ]}

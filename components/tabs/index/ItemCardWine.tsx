@@ -1,4 +1,3 @@
-import WineIcon from '@/assets/icons/WineIcon'
 import MinusIcon from '@/assets/icons/MinusIcon'
 import PlusIcon from '@/assets/icons/PlusIcon'
 import { formatterCurrency } from '@/utils/formatterCurrency'
@@ -7,18 +6,21 @@ import { Image, Text, TouchableOpacity, View } from 'react-native'
 import { IProduct } from '@/infrastructure/interfaces/product.interface'
 import { useRouter } from 'expo-router'
 import { useShop } from '@/store/useShop'
-import { useImages } from '@/store/useImages'
+import GrapesIcon from '@/assets/icons/GrapesIcon'
+import CastleIcon from '@/assets/icons/CastleIcon'
+import PriceTagIcon from '@/assets/icons/PriceTagIcon'
+import BoxIcon from '@/assets/icons/BoxIcon'
 
 interface itemCardWineProps {
     item: IProduct
     addProduct: (product: IProduct) => void
+    image: string | undefined
 }
 
 
-export default function ItemCardWine({ item, addProduct }: itemCardWineProps) {
+export default function ItemCardWine({ item, addProduct, image }: itemCardWineProps) {
 
     const { addQuantity, removeQuantity, order } = useShop()
-    const images = useImages()
     const productInCart = order.products.find((p: any) => p.product.product_id === item.product_id)
 
     const router = useRouter()
@@ -58,7 +60,7 @@ export default function ItemCardWine({ item, addProduct }: itemCardWineProps) {
 
   {/* Imagen */}
   <Image
-    source={images.getImage(item.image)}
+    source={ image || require('@/assets/products/no-product-image.png') }
     style={{
       position: 'absolute',
       bottom: -120,        // 👈 CLAVE: anclada abajo
@@ -80,7 +82,7 @@ export default function ItemCardWine({ item, addProduct }: itemCardWineProps) {
                 </Text>
                 </View>
                 <View className='flex-row items-center gap-2'>
-                <WineIcon size={24} color="#c9a24d" />
+                <CastleIcon size={24} color="#c9a24d" />
                 <Text 
                     numberOfLines={1}
                     ellipsizeMode="tail"
@@ -90,7 +92,7 @@ export default function ItemCardWine({ item, addProduct }: itemCardWineProps) {
                 </Text>
                 </View>
                 <View className='flex-row items-center gap-2'>
-                    <WineIcon size={24} color="#c9a24d" />
+                    <GrapesIcon size={24} color="#c9a24d" />
                     <Text 
                         numberOfLines={1}
                         ellipsizeMode="tail"
@@ -99,8 +101,15 @@ export default function ItemCardWine({ item, addProduct }: itemCardWineProps) {
                         {item.variant}
                     </Text>
                 </View>
-                <Text className='text-xl text-primary font-medium '>Price: {formatterCurrency(item.price)}</Text>   
-                <Text className='text-xl text-primary font-medium '>Stock: {item.stock}</Text>   
+                <View className="flex-row items-center gap-2">
+                    <PriceTagIcon size={24} color="#c9a24d" />
+                    <Text className='text-xl text-primary  font-medium'>{formatterCurrency(item.price)} MXN</Text>   
+                </View>
+                
+                <View className='flex-row items-center gap-2'>
+                    <BoxIcon size={26} color="#c9a24d" />
+                    <Text className='text-xl text-primary'>{item.stock} piezas</Text>   
+                </View>
                 {
                     productInCart && productInCart.quantity > 0 ? (
                         <View className='flex-row items-center bg-tertiary rounded-2xl px-4 py-2 w-full absolute bottom-[-30px] shadow-sm z-50'>
@@ -114,7 +123,7 @@ export default function ItemCardWine({ item, addProduct }: itemCardWineProps) {
                         </View>
                     ) : (
                         <TouchableOpacity className='bg-tertiary rounded-2xl p-2 w-full absolute bottom-[-30px]' onPress={handleAddProduct}>
-                            <Text className='text-lg font-medium text-white text-center '>Add</Text>
+                            <Text className='text-lg font-medium text-white text-center '>Agregar</Text>
                         </TouchableOpacity>
                     )
                 }

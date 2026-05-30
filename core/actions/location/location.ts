@@ -6,10 +6,6 @@ export const getCurrentLocation = async (): Promise<LatLng> => {
     const { coords } = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.Highest,
     });
-
-    console.log("coords", coords);
-    
-
     return {
       latitude: coords.latitude,
       longitude: coords.longitude,

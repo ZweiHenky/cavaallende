@@ -7,37 +7,33 @@ import { useLocationStore } from "@/store/useLocationStore";
 
 export default function DeliveriesLayout() {
 
-    const { data: session, isPending } = authClient.useSession()
-    const {getLocation, lastKnownLocation} = useLocationStore()
+  const { data: session, isPending } = authClient.useSession()
+  const { getLocation, lastKnownLocation } = useLocationStore()
 
-    useOnCreatePurchase();
+  useOnCreatePurchase();
 
-    useEffect(() => {
-        if (!lastKnownLocation) {
-          getLocation()
-        }
-      }, [lastKnownLocation, getLocation])
+  useEffect(() => {
+    if (!lastKnownLocation) {
+      getLocation()
+    }
+  }, [lastKnownLocation, getLocation])
 
-    useEffect(() => {
-        if (session && !isPending) {
-          // Enable verbose logging for debugging (remove in production)
-          OneSignal.Debug.setLogLevel(LogLevel.Verbose);
-          // Initialize with your OneSignal App ID
-          OneSignal.initialize(process.env.EXPO_PUBLIC_ONESIGNAL_ID!);
-    
-          OneSignal.login(session.user.id);
+  useEffect(() => {
+    if (session && !isPending) {
 
-          OneSignal.User.addTag("role", "delivery");
-          // Use this method to prompt for push notifications.
-          // We recommend removing this method after testing and instead use In-App Messages to prompt for notification permission.
-          OneSignal.Notifications.requestPermission(false);
-        }
-      }, [session])
 
-    return (
-        <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="detailOrder" />
-        </Stack>
-    );
+      OneSignal.login(session.user.id);
+
+      OneSignal.User.addTag("role", "delivery");
+
+    }
+  }, [session])
+
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="detailOrder" />
+      <Stack.Screen name="orderResume" />
+    </Stack>
+  );
 }

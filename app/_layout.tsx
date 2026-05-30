@@ -37,18 +37,19 @@ export default function RootLayout() {
     }
   }, [requestLocationPermission, locationStatus])
 
-  useEffect(() => {
-    // Enable verbose logging for debugging (remove in production)
-    OneSignal.Debug.setLogLevel(LogLevel.Verbose);
+useEffect(() => {
 
-    // Replace with your OneSignal App ID from Dashboard > Settings > Keys & IDs
-    OneSignal.initialize(process.env.EXPO_PUBLIC_ONESIGNAL_ID!);
+  OneSignal.Debug.setLogLevel(6);
 
-    // Prompt for push permission on first launch.
-    // In production, consider using an in-app message instead for better opt-in rates.
-    OneSignal.Notifications.requestPermission(false);
+  OneSignal.initialize(
+    process.env.EXPO_PUBLIC_ONESIGNAL_ID!
+  );
 
-  }, []);
+  OneSignal.User.pushSubscription.optIn();
+
+  OneSignal.Notifications.requestPermission(false);
+
+}, []);
   
   if (!fontsLoaded && !fontError) {
     return null;

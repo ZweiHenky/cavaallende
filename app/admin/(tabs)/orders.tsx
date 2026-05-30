@@ -2,25 +2,29 @@ import AdminOrderItem from '@/components/admin/AdminOrderItem';
 import Error from '@/components/ui/Error';
 import Loading from '@/components/ui/Loading';
 import { ThemedView } from '@/components/ui/ThemedView';
+import { usePullToRefresh } from '@/hooks/refresh/usePullToRefresh';
 import { useGetPurchasesToday } from '@/hooks/services/purchases/useGetPutchasesToday';
 import { IPurchase } from '@/infrastructure/interfaces/purchase.interface';
 import React, { useState } from 'react';
-import { FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, RefreshControl, Text, TouchableOpacity, View } from 'react-native';
 
 const tabs = [
   { key: 'incoming', label: 'Entrantes' },
-  { key: 'history',  label: 'Historial'  },
+  { key: 'history', label: 'Historial' },
 ];
 
 export default function AdminOrders() {
 
   const [active, setActive] = useState<string>('incoming');
 
+
   // Incoming = paid (waiting to be accepted)
   // History  = accepted, on_the_way, completed
-  const { data, isLoading, error } = useGetPurchasesToday(
+  const { data, isLoading, error, refetch } = useGetPurchasesToday(
     active === 'incoming' ? 'paid' : 'accepted,on_the_way,completed'
   );
+
+  const { loadingRefresh, pullToRefresh } = usePullToRefresh(refetch)
 
   const handleChangeStatus = (status: string) => {
     if (status === active) return;
@@ -47,14 +51,12 @@ export default function AdminOrders() {
               key={tab.key}
               onPress={() => handleChangeStatus(tab.key)}
               disabled={isActive}
-              className={`flex-1 items-center py-2 rounded-xl ${
-                isActive ? 'bg-[#5a0f1b]' : ''
-              }`}
+              className={`flex-1 items-center py-2 rounded-xl ${isActive ? 'bg-[#5a0f1b]' : ''
+                }`}
             >
               <Text
-                className={`text-xl font-bold ${
-                  isActive ? 'text-white' : 'text-gray-500'
-                }`}
+                className={`text-xl font-bold ${isActive ? 'text-white' : 'text-gray-500'
+                  }`}
               >
                 {tab.label}
               </Text>
@@ -67,7 +69,13 @@ export default function AdminOrders() {
         {error && <Error message={error.message} />}
         {data?.data && data.data.length > 0 ? (
           <FlatList<IPurchase>
-            data={data.data}
+            refreshControl={
+              <RefreshControl
+                refreshing={loadingRefresh}
+                onRefresh={pullToRefresh}
+              />
+            }
+            data={data?.data}
             renderItem={({ item }) => <AdminOrderItem item={item} />}
             keyExtractor={({ purchase_id }) => purchase_id.toString()}
             ItemSeparatorComponent={() => <View className="h-4" />}
